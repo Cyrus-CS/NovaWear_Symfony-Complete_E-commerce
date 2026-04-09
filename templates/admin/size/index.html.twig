@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Size index{% endblock %}
+
+{% block body %}
+<div class="container mt-4 pb-3">
+    <h3 class='text-center'>Size index</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Label</th>
+                <th>Slug</th>
+                <th>Position</th>
+                    <th>Product Variant</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for size in sizes %}
+            <tr>
+                <td>{{ size.id }}</td>
+                <td>{{ size.label }}</td>
+                <td>{{ size.slug }}</td>
+                <td>{{ size.position }}</td>
+                <td>{{ size.productTypeVariation.name }}</td>
+                <td>
+                    <a href="{{ path('app_size_show', {'id': size.id}) }}">show</a>
+                    <a href="{{ path('app_size_edit', {'id': size.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class='btn btn-outline-primary' href="{{ path('app_size_new') }}">Create new</a>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+{% block title %}Wishlist | NovaWear{% endblock %}
+
+{% block body %}
+<div class="ac-hero position-relative overflow-hidden">
+  <div class="ac-hero__overlay"></div>
+  <div class="container position-relative z-1 py-5 text-center text-white">
+    <h1 class="ac-hero__title fw-bold mb-2">My Account</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}" class="text-white text-opacity-75 text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('account.dashboard') }}" class="text-white text-opacity-75 text-decoration-none">My Account</a></li>
+        <li class="breadcrumb-item active text-white">Wishlist</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="bg-white py-5">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      {# Sidebar #}
+      {% include 'account/_sidebar.html.twig' with {current: 'account.wishlist'} %}
+
+      {# Contenu #}
+      <div class="col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h2 class="h5 fw-bold mb-0">Your Products Wishlist</h2>
+        </div>
+
+        {% for message in app.flashes('success') %}
+          <div class="alert alert-success alert-dismissible fade show py-2" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+
+        {% if items|length == 0 %}
+          <div class="text-center py-5">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.2" class="mb-3">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+            <p class="text-muted small mb-3">Your wishlist is empty.</p>
+            <a href="{{ path('shop.index') }}" class="btn btn-dark btn-sm px-4">Browse products</a>
+          </div>
+
+        {% else %}
+          <div class="row g-4" id="wishlistGrid">
+            {% for item in items %}
+              {% set product = item.product %}
+
+              {# Résolution image principale + hover #}
+              {% set mainImage      = null %}
+              {% set secondaryImage = null %}
+              {% set allImages      = product.productImages|filter(img => img.color is null) %}
+              {% set allImagesAny   = product.productImages %}
+
+              {% for img in allImages %}{% if img.isMain and mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}
+              {% if mainImage is null %}{% for img in allImages %}{% if mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}{% endif %}
+              {% if mainImage is null %}{% for img in allImagesAny %}{% if mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}{% endif %}
+              {% set foundMain = false %}
+              {% for img in allImages %}
+                {% if img == mainImage %}{% set foundMain = true %}
+                {% elseif foundMain and secondaryImage is null %}{% set secondaryImage = img %}{% endif %}
+              {% endfor %}
+              {% if secondaryImage is null %}
+                {% for img in allImages %}{% if img != mainImage and secondaryImage is null %}{% set secondaryImage = img %}{% endif %}{% endfor %}
+              {% endif %}
+
+              <div class="col-sm-6 col-md-4" id="wl-item-{{ item.id }}">
+                <div class="card border-0 h-100">
+
+                  {# Bouton Remove #}
+                  <div class="d-flex align-items-center mb-2 gap-2">
+                    <button
+                      class="btn btn-sm text-muted p-0 d-flex align-items-center gap-1 js-wl-remove"
+                      data-id="{{ item.id }}"
+                      style="font-size:.8rem;text-decoration:none;"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      Remove
+                    </button>
+                  </div>
+
+                  {# Image avec hover #}
+                  <div class="js-card-wrap position-relative overflow-hidden rounded-2"
+                       style="background:#f5f5f5;aspect-ratio:3/4;">
+                    <a href="{{ path('product_single', {slug: product.slug}) }}">
+                      <img
+                        class="card-img-main w-100 h-100"
+                        style="object-fit:cover;display:block;"
+                        src="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                        data-src-default="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                        data-src-hover="{{ secondaryImage ? vich_uploader_asset(secondaryImage, 'imageFile') : '' }}"
+                        alt="{{ product.name }}"
+                      />
+                    </a>
+                    {% if product.compareAtPrice and product.compareAtPrice > product.price %}
+                      <span class="badge bg-success position-absolute top-0 start-0 m-2" style="font-size:.7rem;">NEW</span>
+                    {% endif %}
+                  </div>
+
+                  {# Infos produit #}
+                  <div class="pt-3 text-center">
+                    {% if product.categories|length > 0 %}
+                      <div class="text-muted" style="font-size:.72rem;letter-spacing:.08em;">
+                        {{ product.categories|map(c => c.name)|join(', ') }}
+                      </div>
+                    {% endif %}
+                    <p class="fw-semibold mb-1" style="font-size:.9rem;">
+                      <a href="{{ path('product_single', {slug: product.slug}) }}" class="text-dark text-decoration-none">
+                        {{ product.name }}
+                      </a>
+                    </p>
+                    <div class="fw-bold text-dark mb-2" style="font-size:.95rem;">${{ product.price }}</div>
+                    <a href="{{ path('product_single', {slug: product.slug}) }}"
+                       class="btn btn-outline-dark btn-sm w-100" style="font-size:.8rem;letter-spacing:.05em;">
+                      Select options
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.js-wl-remove').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const id  = btn.dataset.id;
+    const row = document.getElementById('wl-item-' + id);
+    try {
+      await fetch(`/account/wishlist/remove/${id}`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (row) {
+        row.style.transition = 'opacity .3s, transform .3s';
+        row.style.opacity    = '0';
+        row.style.transform  = 'scale(.95)';
+        setTimeout(() => row.remove(), 320);
+      }
+    } catch(e) { console.error(e); }
+  });
+});
+</script>
+{% endblock %}

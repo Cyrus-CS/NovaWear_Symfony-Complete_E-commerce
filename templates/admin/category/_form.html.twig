@@ -1,0 +1,39 @@
+{{ form_start(form) }}
+
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name) }}
+        {{ form_errors(form.name) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.slug) }}
+        {{ form_widget(form.slug) }}
+        {{ form_errors(form.slug) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description) }}
+        {{ form_errors(form.description) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.imageFile) }}
+        {{ form_widget(form.imageFile) }}
+        {{ form_errors(form.imageFile) }}
+    </div>
+
+    <div class="form-check form-switch mb-3">
+        {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input'}}) }}
+        {{ form_label(form.isActive, null, {
+            label_attr: {'class': 'form-check-label'}
+        }) }}
+        {{ form_errors(form.isActive) }}
+    </div>
+
+    <button class="btn btn-outline-success mt-3 mb-2">
+        {{ button_label|default('Save Category') }}
+    </button>
+
+{{ form_end(form) }}

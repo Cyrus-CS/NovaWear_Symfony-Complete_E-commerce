@@ -1,0 +1,268 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Your cart | NovaWear{% endblock %}
+
+{% block body %}
+{# ── HERO BREADCRUMB ──────────────────────────────────────────────────────── #}
+<section class="cart-hero">
+  <div class="cart-hero__dots cart-hero__dots--tr"></div>
+  <div class="cart-hero__dots cart-hero__dots--bl"></div>
+  <h1 class="cart-hero__title">Shopping Cart</h1>
+  <p class="cart-hero__breadcrumb">
+    <a href="{{ path('home') ?? '/' }}">Home</a>
+    <span class="mx-2">/</span>
+    <span>Shopping Cart</span>
+  </p>
+</section>
+
+{# ── SECTION PRINCIPALE ───────────────────────────────────────────────────── #}
+<section class="cart-section">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      {# ─── COLONNE PRODUITS (8/12) ─────────────────────────────────────── #}
+      <div class="col-lg-8">
+
+        {% if items is empty %}
+          {# État panier vide #}
+          <div class="cart-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+            <h3>Your cart is empty</h3>
+            <p class="mb-4">Looks like you haven't added anything yet.</p>
+            <a href="{{ path('shop.index') ?? '/shop' }}" class="btn-checkout" style="display:inline-block;width:auto;padding:12px 32px;">
+              Continue Shopping
+            </a>
+          </div>
+
+        {% else %}
+
+          {# Tableau produits #}
+          <div class="table-responsive">
+            <table class="cart-table" id="cartItemsList">
+              <thead class="cart-table__head">
+                <tr>
+                  <th></th>
+                  <th>Product</th>
+                  <th class="col-price">Price</th>
+                  <th class="col-qty text-center">Quantity</th>
+                  <th class="col-subtotal text-end">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                  {% set product  = item.product %}
+                  {% set variant  = item.variant %}
+                  {% set size     = item.size %}
+                  {% set cartItem = item.entity %}
+
+                  <tr id="cart-row-{{ cartItem.id }}">
+
+                    {# Bouton supprimer #}
+                    <td>
+                      <button
+                        type="button"
+                        class="btn-remove-item js-cart-remove"
+                        data-item-id="{{ cartItem.id }}"
+                        aria-label="Remove {{ product.name }}"
+                        title="Remove item"
+                      >✕</button>
+                    </td>
+
+                    {# Image + Nom + Meta #}
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        {% if item.image %}
+                          <img
+                            src="{{ asset('uploads/images/products/' ~ item.image.path) }}"
+                            alt="{{ product.name }}"
+                            class="cart-product-img"
+                          >
+                        {% else %}
+                          <div class="cart-product-img-placeholder"></div>
+                        {% endif %}
+
+                        <div>
+                          <div class="cart-product-name">{{ product.name }}</div>
+                          <div class="cart-product-meta">
+                            {% if variant and variant.color %}Color : {{ variant.color.name }}{% endif %}
+                            {% if variant and variant.color and size %} | {% endif %}
+                            {% if size %}Size : {{ size.label }}{% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    {# Prix unitaire #}
+                    <td class="col-price">
+                      <span class="cart-unit-price">${{ item.unitPrice|number_format(2, '.', '') }}</span>
+                    </td>
+
+                    {# Contrôle quantité #}
+                    <td class="col-qty text-center">
+                      <div class="qty-control" style="margin: 0 auto; width: fit-content;">
+                        <button
+                          type="button"
+                          class="qty-control__btn js-cart-decrease"
+                          data-item-id="{{ cartItem.id }}"
+                          aria-label="Decrease quantity"
+                        >−</button>
+                        <span class="qty-control__val js-cart-qty" data-item-id="{{ cartItem.id }}">
+                          {{ item.quantity }}
+                        </span>
+                        <button
+                          type="button"
+                          class="qty-control__btn js-cart-increase"
+                          data-item-id="{{ cartItem.id }}"
+                          aria-label="Increase quantity"
+                        >+</button>
+                      </div>
+                    </td>
+
+                    {# Sous-total ligne #}
+                    <td class="col-subtotal">
+                      <span class="js-line-total" data-item-id="{{ cartItem.id }}">
+                        ${{ item.lineTotal|number_format(2, '.', '') }}
+                      </span>
+                    </td>
+
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {# Zone coupon + Clear cart #}
+          <div class="cart-coupon-row">
+            <input
+              type="text"
+              class="cart-coupon-input js-coupon-code"
+              placeholder="Coupon Code"
+              value="{{ cart and cart.coupon ? cart.coupon.code : '' }}"
+            >
+            <button type="button" class="btn-apply-coupon js-apply-coupon">
+              Apply Coupon
+            </button>
+            <button type="button" class="btn-clear-cart js-clear-cart">
+              Clear Shopping Cart
+            </button>
+          </div>
+          <div id="couponMessage"></div>
+
+        {% endif %}
+      </div>
+
+      {# ─── ORDER SUMMARY (4/12) ────────────────────────────────────────── #}
+      <div class="col-lg-4">
+        <div class="order-summary-card">
+          <h2 class="order-summary-title">Order Summary</h2>
+
+          {# Nombre d'items #}
+          {% set itemCount = 0 %}
+          {% for item in items %}
+            {% set itemCount = itemCount + item.quantity %}
+          {% endfor %}
+
+          <div class="summary-row">
+            <span class="summary-row__label">Items</span>
+            <span class="summary-row__val" id="summaryItems">{{ itemCount }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-row__label">Sub Total</span>
+            <span class="summary-row__val" id="subtotalVal">${{ subtotal|number_format(2, '.', '') }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-row__label">Shipping</span>
+            <span class="summary-row__val" id="deliveryVal">$0.00</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-row__label">Taxes</span>
+            <span class="summary-row__val">$0.00</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-row__label">Coupon Discount</span>
+            <span class="summary-row__val summary-row__val--discount" id="discountVal">
+              {% if discount > 0 %}-${{ discount|number_format(2, '.', '') }}{% else %}$0.00{% endif %}
+            </span>
+          </div>
+
+          <hr class="summary-divider">
+
+          <div class="summary-row summary-row--total">
+            <span class="summary-row__label">Total</span>
+            <span class="summary-row__val" id="totalVal">${{ total|number_format(2, '.', '') }}</span>
+          </div>
+
+          <a href="{{ path('checkout.index') }}" class="btn-checkout">
+            Proceed to Checkout →
+          </a>
+        </div>
+      </div>
+
+    </div>{# /row #}
+
+    {# ─── FEATURES ─────────────────────────────────────────────────────── #}
+    {% if items is not empty %}
+    <div class="cart-features">
+      <div class="row g-4">
+
+        <div class="col-md-4">
+          <div class="feature-item">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title">Free Shipping</div>
+              <div class="feature-desc">Free shipping for order above $180</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="feature-item">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title">Flexible Payment</div>
+              <div class="feature-desc">Multiple secure payment options</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="feature-item">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.72A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.51-1.51a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title">24x7 Support</div>
+              <div class="feature-desc">We support online all days.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endif %}
+
+  </div>{# /container #}
+</section>
+
+{% endblock %}

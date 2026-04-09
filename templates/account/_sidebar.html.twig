@@ -1,0 +1,26 @@
+{# templates/account/_sidebar.html.twig #}
+<div class="col-lg-3">
+  <p class="text-uppercase fw-bold mb-3" style="font-size:.7rem;letter-spacing:1.5px;">My Account</p>
+  <div class="list-group list-group-flush border-top border-bottom">
+    {% set links = [
+      {route: 'account.dashboard', label: 'Dashboard'},
+      {route: 'account.orders',    label: 'Orders'},
+      {route: 'account.addresses', label: 'Addresses'},
+      {route: 'account.details',   label: 'Account details'},
+      {route: 'account.wishlist',  label: 'Wishlist'},
+    ] %}
+    {% for link in links %}
+      <a href="{{ path(link.route) }}"
+         class="list-group-item list-group-item-action border-0 py-2 px-3
+                {{ current is defined and current == link.route ? 'fw-bold bg-light' : '' }}"
+         style="font-size:.9rem;">
+        {{ link.label }}
+      </a>
+    {% endfor %}
+    <a href="{{ path('app_logout') }}"
+       class="list-group-item list-group-item-action border-0 py-2 px-3 text-danger"
+       style="font-size:.9rem;">
+      Logout
+    </a>
+  </div>
+</div>

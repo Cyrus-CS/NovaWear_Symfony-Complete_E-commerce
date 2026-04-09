@@ -1,0 +1,50 @@
+{% extends "2fa.html.twig" %}
+
+{% block title %}2FA Form{% endblock %}
+
+{% block body %}
+<div class="verify-card">
+
+    <div class="text-center">
+        <p class="verify-title">2 FA authenticator</p>
+        <p class="verify-sub">Check your email</p>
+        <span class="verify-email">
+            {{ app.user.email ?? 'your@email.com' }}
+        </span>
+    </div>
+
+    {# IMPORTANT : le formulaire qui POST vers 2fa_login_check #}
+    <form method="post" action="{{ path('2fa_login_check') }}">
+
+        <div class="otp-group">
+            {# VERSION SIMPLE : un seul champ texte pour le code #}
+            <input
+                class="otp-input"
+                type="text"
+                name="{{ authCodeParameterName|default('_auth_code') }}"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                autocomplete="one-time-code"
+                maxlength="6" {# mets 4 ou 6 selon ta config #}
+                aria-label="Authentication code"
+            />
+
+            {% if isCsrfProtectionEnabled %}
+                <input type="hidden"
+                       name="{{ csrfParameterName }}"
+                       value="{{ csrf_token(csrfTokenId) }}">
+            {% endif %}
+        </div>
+
+        <p class="resend-line">
+            Didn't receive a code?
+            <span id="timerDisplay" class="resend-timer d-none">(28)</span>
+        </p>
+
+        <button type="submit" class="btn-continue" id="continueBtn">
+            Continue <span class="arrow">→</span>
+        </button>
+    </form>
+
+</div>
+{% endblock %}

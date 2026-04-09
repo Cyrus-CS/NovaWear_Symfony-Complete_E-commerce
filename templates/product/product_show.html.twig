@@ -1,0 +1,678 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ product.name }} | NovaWear{% endblock %}
+{% block body_class 'page-product-show' %}
+{% block body %}
+<div class="container py-5">
+  <section class="row g-4 align-items-start mb-5">
+
+    {# ── GALERIE ── #}
+    <div class="col-lg-6">
+      <div class="d-flex gap-3">
+
+        {# Colonne de vignettes #}
+        <div class="nw-thumb-col">
+          {% for image in product.productImages %}
+          {% set src = asset('uploads/images/products/' ~ image.path) %}
+          <button
+            type="button"
+            class="nw-thumb js-product-thumb {% if loop.first %}is-active{% endif %}"
+            data-src="{{ src }}"
+            data-color-id="{{ image.color ? image.color.id : '' }}"
+            data-is-main="{{ image.isMain ? '1' : '0' }}"
+          >
+            <img src="{{ src }}" alt="{{ product.name }}" loading="lazy">
+          </button>
+        {% endfor %}
+
+        {# Bouton "+X plus", géré par le JS selon le groupe (produit / couleur) #}
+        <button type="button" class="nw-thumb js-product-thumb-more d-none">
+          <div class="nw-thumb-more-wrapper">
+            <img
+              src=""
+              alt="{{ product.name }}"
+              loading="lazy"
+              class="js-more-thumb-img"
+            >
+            <div class="nw-thumb-more-overlay">
+              <span class="nw-thumb-more-icon">
+                <img src="{{ asset('images/icons/gallery.svg') }}" alt="Plus">
+              </span>
+              <span class="nw-thumb-more-count js-more-thumb-count"></span>
+            </div>
+          </div>
+        </button>
+        </div>
+
+        {# Image principale #}
+        <div class="nw-mainimg flex-grow-1 js-main-zoom">
+          {% set main = product.mainImage %}
+
+          {% if main %}
+            {% set mainSrc = asset('uploads/images/products/' ~ main.path) %}
+            <img
+              id="mainProductImage"
+              src="{{ mainSrc }}"
+              alt="{{ product.name }}"
+              data-default-src="{{ mainSrc }}"
+              data-color-id="{{ main.color ? main.color.id : '' }}"
+              data-is-main="{{ main.isMain ? '1' : '0' }}"
+            >
+          {% else %}
+            <img
+              id="mainProductImage"
+              src="{{ asset('images/placeholders/product-placeholder.jpg') }}"
+              alt="{{ product.name }}"
+              data-default-src="{{ asset('images/placeholders/product-placeholder.jpg') }}"
+            >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {# ── INFO ── #}
+    <div class="col-lg-6">
+
+      <h1 class="nw-product-title">{{ product.name }}</h1>
+
+      {# Rating #}
+      {% set avg = product.ratingAverage is not null ? product.ratingAverage : 0 %}
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="nw-stars">
+          {% set full = avg|round(0, 'floor') %}
+          {% for i in 1..5 %}
+            <span {% if i > full %}class="nw-star-dim"{% endif %}>★</span>
+          {% endfor %}
+        </span>
+        <small class="text-muted">
+          {{ avg }}/5
+          {% if product.ratingCount is defined %}
+            ({{ product.ratingCount }} review{{ product.ratingCount > 1 ? 's' : '' }})
+          {% endif %}
+        </small>
+      </div>
+
+      {# Prix #}
+      <div class="d-flex align-items-center gap-3 mb-3">
+      <span
+        class="nw-price-now js-product-price"
+        data-base-price="{{ product.price }}"
+      >
+        ${{ product.price }}
+      </span>
+
+      <span
+        class="nw-price-old js-product-compare-at {{ product.compareAtPrice ? '' : 'd-none' }}"
+      >
+        {% if product.compareAtPrice %}
+          ${{ product.compareAtPrice }}
+        {% endif %}
+      </span>
+
+      <span
+        class="nw-badge-sale js-discount-badge {{ product.compareAtPrice ? '' : 'd-none' }}"
+      >
+        {% if product.compareAtPrice %}
+          {# remise initiale pour le produit global #}
+          {% set discount = ((product.compareAtPrice - product.price) / product.compareAtPrice * 100)|round %}
+          -{{ discount }}%
+        {% endif %}
+      </span>
+    </div>
+
+      <p class="nw-desc">{{ product.description | nl2br }}</p>
+
+      {# Couleurs #}
+      {% if product.colors|length > 0 %}
+        <div class="mb-3">
+            <div class="nw-opt-label">
+              Color:
+              <span id="selectedColorName"></span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap" id="colorSwatches">
+
+              {# 1) Swatch pour l'image principale du produit #}
+              {% set main = product.mainImage %}
+              {% if main %}
+                {% set mainSrc = asset('uploads/images/products/' ~ main.path) %}
+              {% else %}
+                {% set mainSrc = asset('images/placeholders/product-placeholder.jpg') %}
+              {% endif %}
+
+              <button
+                type="button"
+                class="nw-color-thumb js-color-swatch is-selected"
+                data-color-id=""              {# => aucune couleur, mode "produit" #}
+                data-color-name=""
+                aria-label="{{ product.name }}"
+                title="{{ product.name }}"
+              >
+                <img
+                  src="{{ mainSrc }}"
+                  alt="{{ product.name }}"
+                >
+              </button>
+
+              {# 2) Swatches pour chaque couleur #}
+              {% for color in product.colors %}
+
+                {# Cherche l'image isMain=true de cette couleur pour la miniature #}
+                {% set coverImg = null %}
+                {% for image in product.productImages %}
+                  {% if image.color and image.color.id == color.id and image.isMain %}
+                    {% set coverImg = image %}
+                  {% endif %}
+                {% endfor %}
+
+                <button
+                  type="button"
+                  class="nw-color-thumb js-color-swatch"
+                  data-color-id="{{ color.id }}"
+                  data-color-name="{{ color.name }}"
+                  aria-label="{{ color.name }}"
+                  title="{{ color.name }}"
+                >
+                  {% if coverImg %}
+                    <img
+                      src="{{ asset('uploads/images/products/' ~ coverImg.path) }}"
+                      alt="{{ color.name }}"
+                    >
+                  {% else %}
+                    <span
+                      class="nw-swatch-hex"
+                      style="background-color: {{ color.hexCode }};"
+                      title="{{ color.name }} (pas d'image)"
+                    ></span>
+                  {% endif %}
+                </button>
+
+              {% endfor %}
+
+            </div>
+          </div>
+      {% endif %}
+
+      {# Tailles #}
+      {% if allSizes is defined and allSizes|length > 0 %}
+      <div class="mb-3">
+        <div class="nw-opt-label">Size</div>
+
+        <input
+          type="hidden"
+          name="size_id"
+          class="js-size-input"
+          value=""
+        >
+
+        <div class="d-flex flex-wrap gap-2" id="sizePills">
+          {% for size in allSizes|sort((a, b) => a.position <=> b.position) %}
+            <button
+              type="button"
+              class="nw-pill js-size-pill"
+              data-size-id="{{ size.id }}"
+            >
+              {{ size.label }}
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+      {#   <div class="nw-divider"></div> #}
+    {% endif %}
+
+    {# Quantité + Add to Cart #}
+    <form
+        action="{{ path('cart.add', { slug: product.slug }) }}"
+        method="post"
+        class="d-flex align-items-center gap-3 mt-3"
+      >
+        <div class="nw-qty" role="group" aria-label="Quantity">
+          <button class="nw-qty-btn" type="button" onclick="changeQty(-1)" aria-label="Decrease">−</button>
+          <span class="nw-qty-val" id="qtyVal">1</span>
+          <button class="nw-qty-btn" type="button" onclick="changeQty(1)" aria-label="Increase">+</button>
+          <input type="hidden" name="quantity" id="qtyInput" value="1">
+        </div>
+
+         {#   Ces deux champs sont remplis par le JS quand l'utilisateur choisit couleur/taille -#}
+        <input type="hidden" name="variant_id" id="cartVariantId" value="">
+        <input type="hidden" name="size_id"    id="cartSizeId"    value="">
+
+        <button type="submit" class="nw-btn nw-btn-primary flex-grow-1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.2">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          Add to Cart
+        </button>
+      </form>
+    </div>
+    
+    {# Variantes par couleur #}
+    <script id="colorVariantsData" type="application/json">
+      {{ colorVariants|json_encode|raw }}
+    </script>
+
+    <script>
+      window.baseProductData = {
+        price: {{ product.price }},
+        compareAtPrice: {{ product.compareAtPrice is not null ? product.compareAtPrice : 'null' }},
+        stock: {{ product.stock }},
+        // facultatif ici : toutes les tailles -> on peut lister les IDs
+        sizeIds: [
+          {% for size in allSizes %}
+            {{ size.id }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        ]
+      };
+    </script>
+</section>
+
+  {# ════════════════════════════════════════════
+     TABS
+  ════════════════════════════════════════════ #}
+  <div class="nw-tabs mb-4">
+    <nav class="d-flex">
+      <button class="nw-tab" data-tab="details">Product Details</button>
+      <button class="nw-tab active" data-tab="reviews">Rating &amp; Reviews</button>
+      <button class="nw-tab" data-tab="faq">FAQs</button>
+    </nav>
+  </div>
+
+  {# ── TAB: Product Details ── #}
+  <div id="tab-details" class="tab-pane d-none">
+    <div class="row">
+      <div class="col-lg-8">
+        <h3 class="fw-bold mb-3" style="font-family:var(--nw-font-display)">Product Details</h3>
+        <p class="nw-desc mb-3">{{ product.description }}</p>
+        {# Tu pourras ajouter ici une liste de caractéristiques si tu ajoutes un champ dédié #}
+      </div>
+    </div>
+  </div>
+
+  {# ── TAB: Reviews ── #}
+  <div id="tab-reviews" class="tab-pane">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+      <h2 class="mb-0 fs-5 fw-bold" style="font-family:var(--nw-font-display)">
+        All Reviews <span class="text-muted fw-normal">({{ reviews|length }})</span>
+      </h2>
+      <div class="d-flex align-items-center gap-2">
+        <button class="nw-kebab border rounded-pill px-3" style="width:auto;height:40px;" aria-label="Filter">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <select class="form-select form-select-sm rounded-pill" style="height:40px;border-color:var(--nw-line);font-size:13px;box-shadow:none;" aria-label="Sort reviews">
+          <option>Latest</option>
+          <option>Top Rated</option>
+          <option>Oldest</option>
+        </select>
+        {# Bouton Write a Review — visible seulement si connecté #}
+        {% if app.user %}
+          <button class="nw-btn nw-btn-outline" data-bs-toggle="modal" data-bs-target="#reviewModal">
+            Write a Review
+          </button>
+        {% else %}
+          <a href="{{ path('app_login') }}" class="nw-btn nw-btn-outline">
+            Login to Write a Review
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-3" id="reviewGrid">
+      {% for review in reviews|slice(0, 6) %}
+        <div class="col review-item">
+          <article class="nw-reviewcard h-100">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="nw-stars" style="font-size:14px;">
+                {% for i in 1..5 %}
+                  <span {% if i > review.rating %}class="nw-star-dim"{% endif %}>★</span>
+                {% endfor %}
+              </span>
+              <button class="nw-kebab" aria-label="Options">···</button>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <strong style="font-size:14px;">{{ review.authorName }}</strong>
+              <span class="nw-verified" title="Verified purchase">✓</span>
+            </div>
+            <p class="nw-review-text mb-2">"{{ review.comment }}"</p>
+            <div class="nw-review-date">
+              Posted on {{ review.createdAt|date('F d, Y') }}
+            </div>
+          </article>
+        </div>
+      {% else %}
+        <div class="col-12">
+          <p class="text-muted text-center py-5">Be the first to review this product!</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if reviews|length > 6 %}
+      <div class="text-center mt-4">
+        <button class="nw-btn nw-btn-outline" id="loadMoreBtn" data-page="1" data-product="{{ product.id }}">
+          Load More Reviews
+        </button>
+      </div>
+    {% endif %}
+  </div>
+
+  {# ── TAB: FAQ ── (inchangé) ── #}
+  <div id="tab-faq" class="tab-pane d-none container-faq">
+    <div class="questions">
+      <div class="visible-pannel">
+        <h2 class="mb-0 fs-5 fw-bold" style="font-family:var(--nw-font-display)">Lorem ipsum dolor sit amet consectetur.</h2>
+        <img src="{{ asset('images/icons/plus.svg') }}" alt="Toggle answer" class="toggle-icon" />
+      </div>
+      <div class="toggle-pannel">
+      <h5>Lorem ipsum dolor sit amet consectetur.</h5>
+        <p class="text-muted">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam ab rem nisi nihil. Commodi similique soluta accusamus quidem dignissimos! Ea, quis ducimus.</p>
+      </div>
+    </div>
+    <div class="questions">
+      <div class="visible-pannel">
+        <h2 class="mb-0 fs-5" style="font-family:var(--nw-font-display)">Lorem ipsum dolor sit amet consectetur.</h2>
+        <img src="{{ asset('images/icons/plus.svg') }}" alt="Toggle answer" class="toggle-icon" />
+      </div>
+      <div class="toggle-pannel">
+      <h5>Lorem ipsum dolor sit amet consectetur.</h5>
+        <p class="text-muted">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam ab rem nisi nihil. Commodi similique soluta accusamus quidem dignissimos! Ea, quis ducimus.</p>
+      </div>
+    </div>
+    <div class="questions">
+      <div class="visible-pannel">
+        <h2 class="mb-0 fs-5 fw-bold" style="font-family:var(--nw-font-display)">Lorem ipsum dolor sit amet consectetur.</h2>
+        <img src="{{ asset('images/icons/plus.svg') }}" alt="Toggle answer" class="toggle-icon" />
+      </div>
+      <div class="toggle-pannel">
+        <h5>Lorem ipsum dolor sit amet consectetur.</h5>
+        <p class="text-muted">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam ab rem nisi nihil. Commodi similique soluta accusamus quidem dignissimos! Ea, quis ducimus.</p>
+      </div>
+    </div>
+    <div class="questions">
+      <div class="visible-pannel">
+        <h2 class="mb-0 fs-5 fw-bold" style="font-family:var(--nw-font-display)">Lorem ipsum dolor sit amet consectetur.</h2>
+        <img src="{{ asset('images/icons/plus.svg') }}" alt="Toggle answer" class="toggle-icon" />
+      </div>
+      <div class="toggle-pannel">
+      <h5>Lorem ipsum dolor sit amet consectetur.</h5>
+        <p class="text-muted">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam ab rem nisi nihil. Commodi similique soluta accusamus quidem dignissimos! Ea, quis ducimus.</p>
+      </div>
+    </div>
+  </div>
+
+  {# ── LIGHTBOX / CARROUSEL PLEIN ÉCRAN ── #}
+  <div id="imageLightbox" class="nw-lightbox d-none">
+    <div class="nw-lightbox-backdrop"></div>
+
+    <div class="nw-lightbox-inner">
+      <button type="button" class="nw-lightbox-close" aria-label="Fermer">&times;</button>
+      <button type="button" class="nw-lightbox-prev" aria-label="Image précédente">&#10094;</button>
+
+      <img id="lightboxImage" src="" alt="{{ product.name }}">
+
+      <button type="button" class="nw-lightbox-next" aria-label="Image suivante">&#10095;</button>
+
+      <div class="nw-lightbox-counter">
+        <span id="lightboxCurrent">1</span> / <span id="lightboxTotal">{{ product.productImages|length }}</span>
+      </div>
+    </div>
+  </div>
+
+  {# Données pour le carrousel plein écran (JSON) #}
+  {% set galleryUrls = [] %}
+  {% for image in product.productImages %}
+      {% set galleryUrls = galleryUrls|merge([asset('uploads/images/products/' ~ image.path)]) %}
+  {% endfor %}
+
+  <script id="productGalleryData" type="application/json">
+    {{ galleryUrls|json_encode|raw }}
+  </script>
+
+  {# Variantes par couleur : pour l’instant on met les mêmes valeurs que le produit.
+  Quand tu auras une vraie entité de variation, tu rempliras avec les vrais prix/stock/tailles. #}
+  <script id="colorVariantsData" type="application/json">
+  {
+    {% for color in product.colors %}
+      "{{ color.id }}": {
+        "price": {{ product.price }},
+        "compareAtPrice": {{ product.compareAtPrice is not null ? product.compareAtPrice : 'null' }},
+        "stock": {{ product.stock }},
+        "sizeIds": [
+          {% for size in product.sizes %}
+            {{ size.id }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        ]
+      }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  }
+  </script>
+
+  <script>
+    // Données de base du produit (sans couleur sélectionnée)
+    window.baseProductData = {
+      price: {{ product.price }},
+      compareAtPrice: {{ product.compareAtPrice is not null ? product.compareAtPrice : 'null' }},
+      stock: {{ product.stock }},
+      sizeIds: [
+        {% for size in product.sizes %}
+          {{ size.id }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+      ]
+    };
+  </script>
+
+</div>
+
+
+{# Modal — seulement si connecté #}
+{% if app.user %}
+{# MODAL: Write a Review (inchangé, juste adapter les noms de champs à ton entité Review si besoin) #}
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="reviewModalLabel" style="font-family:var(--nw-font-display);font-size:20px;">
+          Write a Review
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body pt-3">
+        <form id="reviewForm" action="{{ path('review_store', {id: product.id}) }}" method="POST" novalidate>
+          <input type="hidden" name="_token" value="{{ csrf_token('review_' ~ product.id) }}" />
+          <input type="hidden" name="product_id" value="{{ product.id }}" />
+
+          {# Rating étoile #}
+          <div class="mb-4">
+            <label class="form-label text-muted small mb-2">Your Rating</label>
+            <div class="nw-star-rate flex-row-reverse justify-content-end" id="starRating">
+              {% for i in 5..1 %}
+                <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" {% if i == 5 %}required{% endif %} />
+                <label for="star{{ i }}" title="{{ i }} star{{ i > 1 ? 's' : '' }}">★</label>
+              {% endfor %}
+            </div>
+          </div>
+
+          {# Nom #}
+          <div class="mb-3">
+            <label for="reviewAuthor" class="form-label fw-semibold" style="font-size:14px;">Your Name</label>
+            <input
+              type="text" id="reviewAuthor" name="author_name"
+              class="form-control rounded-3"
+              placeholder="e.g. Samantha D."
+              required minlength="2"
+              style="height:48px;border-color:var(--nw-line);"
+            />
+          </div>
+
+          {# Commentaire #}
+          <div class="mb-4">
+            <label for="reviewComment" class="form-label fw-semibold" style="font-size:14px;">Your Review</label>
+            <textarea
+              id="reviewComment" name="comment"
+              class="form-control rounded-3"
+              rows="4"
+              placeholder="Share your experience with this product…"
+              required minlength="10"
+              style="border-color:var(--nw-line);resize:none;"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="nw-btn nw-btn-primary w-100" style="height:50px;font-size:15px;">
+            Submit Review
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+{# ══════════════════════════════════════════════════════════════
+   REVIEW FORM — Soumission AJAX + injection card dans #reviewGrid
+   À placer juste avant {% endblock %} dans show.html.twig
+   ══════════════════════════════════════════════════════════════ #}
+<script>
+(function () {
+  'use strict';
+
+  const form     = document.getElementById('reviewForm');
+  const modal    = document.getElementById('reviewModal');
+  const grid     = document.getElementById('reviewGrid');
+  const emptyMsg = grid ? grid.querySelector('.col-12 .text-muted') : null;
+
+  if (!form) return;
+
+  /* ── Rendu étoiles ─────────────────────────────────────────── */
+  function renderStars(rating) {
+    let html = '<span class="nw-stars" style="font-size:14px;">';
+    for (let i = 1; i <= 5; i++) {
+      html += `<span${i > rating ? ' class="nw-star-dim"' : ''}>★</span>`;
+    }
+    html += '</span>';
+    return html;
+  }
+
+  /* ── Création du HTML d'une review card ────────────────────── */
+  function buildReviewCard(review) {
+    return `
+      <div class="col review-item" style="opacity:0;transform:translateY(10px);transition:opacity .35s ease,transform .35s ease">
+        <article class="nw-reviewcard h-100">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            ${renderStars(review.rating)}
+            <button class="nw-kebab" aria-label="Options">···</button>
+          </div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <strong style="font-size:14px;">${escHtml(review.authorName)}</strong>
+            ${review.isVerified ? '<span class="nw-verified" title="Verified purchase">✓</span>' : ''}
+          </div>
+          <p class="nw-review-text mb-2">"${escHtml(review.comment)}"</p>
+          <div class="nw-review-date">Posted on ${review.createdAt}</div>
+        </article>
+      </div>`;
+  }
+
+  /* ── Échappement HTML minimal ──────────────────────────────── */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* ── Affichage d'une erreur dans le formulaire ─────────────── */
+  function showFormError(msg) {
+    let alert = form.querySelector('.review-alert');
+    if (!alert) {
+      alert = document.createElement('div');
+      alert.className = 'review-alert alert alert-danger py-2 small mb-3 rounded-3';
+      form.prepend(alert);
+    }
+    alert.textContent = msg;
+    alert.style.display = 'block';
+  }
+
+  function clearFormError() {
+    const alert = form.querySelector('.review-alert');
+    if (alert) alert.style.display = 'none';
+  }
+
+  /* ── Soumission AJAX ───────────────────────────────────────── */
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFormError();
+
+    const submitBtn = form.querySelector('[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+
+    try {
+      const res  = await fetch(form.action, {
+        method:  'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body:    new FormData(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.errors) {
+        const msg = data.errors ? data.errors.join(' ') : (data.error || 'An error occurred.');
+        showFormError(msg);
+        return;
+      }
+
+      // ── Succès : injecter la card dans #reviewGrid ─────────
+      if (grid) {
+        // Retirer le message "Be the first to review" si présent
+        const placeholder = grid.querySelector('.col-12');
+        if (placeholder && placeholder.querySelector('.text-muted')) {
+          placeholder.remove();
+        }
+
+        // Insérer la nouvelle card en tête de grille
+        grid.insertAdjacentHTML('afterbegin', buildReviewCard(data.review));
+
+        // Animer l'apparition
+        const newCard = grid.firstElementChild;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            newCard.style.opacity   = '1';
+            newCard.style.transform = 'translateY(0)';
+          });
+        });
+      }
+
+      // ── Fermer le modal Bootstrap ──────────────────────────
+      const bsModal = bootstrap.Modal.getInstance(modal);
+      if (bsModal) bsModal.hide();
+
+      // ── Réinitialiser le formulaire ────────────────────────
+      form.reset();
+
+      // Réinitialiser les étoiles visuellement (radio Bootstrap)
+      form.querySelectorAll('.nw-star-rate input[type="radio"]')
+        .forEach(r => r.checked = false);
+
+      // Basculer vers l'onglet Reviews si pas déjà actif
+      const reviewTab = document.querySelector('[data-tab="reviews"]');
+      if (reviewTab && !reviewTab.classList.contains('active')) {
+        reviewTab.click();
+      }
+
+    } catch (err) {
+      showFormError('Network error. Please try again.');
+      console.error(err);
+    } finally {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+
+})();
+</script>
+
+{% endblock %}

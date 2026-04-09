@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Size{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h3 class="h3 mb-3 text-center">Create new Size</h3>
+
+    {{ include('admin/size/_form.html.twig') }}
+
+    <a href="{{ path('app_size_index') }}">back to list</a>
+</div>
+{% endblock %}

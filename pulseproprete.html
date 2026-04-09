@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nettoyage de bureaux Rennes | Services & Entreprises 2025</title>
+    <meta name="description" content="Découvrez les services de nettoyage de bureaux à Rennes : Pulse Propreté, Multiclean 35, Cleanolia. Devis rapide, intervention 7j/7.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --pulse-primary: #FFA42B;
+            --pulse-secondary: #FFA42B;
+            --pulse-dark: #666666;
+            --pulse-text: #333333;
+            --pulse-heading: #1a1a1a;
+            --pulse-white: #ffffff;
+            --pulse-light-bg: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .nettoyage-bureaux-rennes-wrapper {
+            font-family: 'Roboto', sans-serif;
+            color: var(--pulse-text);
+            line-height: 1.8;
+            background: var(--pulse-white);
+        }
+
+        .nettoyage-bureaux-rennes-wrapper h1,
+        .nettoyage-bureaux-rennes-wrapper h2,
+        .nettoyage-bureaux-rennes-wrapper h3,
+        .nettoyage-bureaux-rennes-wrapper h4 {
+            font-family: 'Yantramanav', sans-serif;
+            color: var(--pulse-heading);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        /* Barre de progression */
+        .pulse-progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            z-index: 9999;
+        }
+
+        .pulse-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pulse-primary), #ff8c00);
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        /* Container principal */
+        .pulse-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* En-tête article */
+        .pulse-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--pulse-light-bg) 0%, var(--pulse-white) 100%);
+            border-radius: 15px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .pulse-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: var(--pulse-heading);
+            font-weight: 900;
+        }
+
+        .pulse-intro {
+            font-size: 1.2rem;
+            color: var(--pulse-dark);
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .pulse-summary {
+            background: linear-gradient(135deg, var(--pulse-primary) 0%, #ff8c00 100%);
+            color: var(--pulse-white);
+            padding: 25px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(255, 164, 43, 0.3);
+            border-left: 5px solid #ff8c00;
+        }
+
+        .pulse-summary strong {
+            font-weight: 700;
+        }
+
+        /* Table des matières */
+        .pulse-toc {
+            background: var(--pulse-light-bg);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+            border-left: 5px solid var(--pulse-primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .pulse-toc h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pulse-toc h2 i {
+            color: var(--pulse-primary);
+            font-size: 1.6rem;
+        }
+
+        .pulse-toc ul {
+            list-style: none;
+        }
+
+        .pulse-toc li {
+            margin: 12px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .pulse-toc li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--pulse-primary);
+            font-weight: 700;
+        }
+
+        .pulse-toc a {
+            color: var(--pulse-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .pulse-toc a:hover {
+            color: var(--pulse-primary);
+        }
+
+        /* Sections */
+        .pulse-section {
+            margin: 60px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .pulse-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pulse-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--pulse-primary);
+        }
+
+        .pulse-section h2 i {
+            color: var(--pulse-primary);
+            font-size: 2rem;
+        }
+
+        .pulse-section h3 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            color: var(--pulse-heading);
+            font-weight: 600;
+        }
+
+        .pulse-section h4 {
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+            color: var(--pulse-dark);
+            font-weight: 600;
+        }
+
+        .pulse-section p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            line-height: 1.9;
+        }
+
+        /* Listes */
+        .pulse-list {
+            background: var(--pulse-light-bg);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid var(--pulse-primary);
+        }
+
+        .pulse-list h4 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--pulse-primary);
+        }
+
+        .pulse-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pulse-list li {
+            padding: 12px 0 12px 35px;
+            position: relative;
+            font-size: 1.05rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .pulse-list li:last-child {
+            border-bottom: none;
+        }
+
+        .pulse-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--pulse-primary);
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        /* Checklist */
+        .pulse-checklist {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid var(--pulse-primary);
+        }
+
+        .pulse-checklist h4 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .pulse-checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pulse-checklist li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+            font-size: 1.05rem;
+        }
+
+        .pulse-checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        /* Tableaux */
+        .pulse-table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .pulse-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--pulse-white);
+        }
+
+        .pulse-table thead {
+            background: linear-gradient(135deg, var(--pulse-primary) 0%, #ff8c00 100%);
+        }
+
+        .pulse-table th {
+            padding: 18px 15px;
+            text-align: left;
+            color: var(--pulse-white);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .pulse-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 1rem;
+        }
+
+        .pulse-table tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        .pulse-table tbody tr:hover {
+            background: var(--pulse-light-bg);
+        }
+
+        /* Images */
+        .pulse-image-container {
+            position: relative;
+            margin: 40px 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .pulse-article-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .pulse-image-container:hover .pulse-article-image {
+            transform: scale(1.05);
+        }
+
+        .pulse-image-caption {
+            background: var(--pulse-light-bg);
+            padding: 20px;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--pulse-dark);
+            border-left: 4px solid var(--pulse-primary);
+        }
+
+        /* Encadré info */
+        .pulse-info-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid #f59e0b;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .pulse-info-box h4 {
+            margin-top: 0;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pulse-info-box h4 i {
+            color: #f59e0b;
+        }
+
+        .pulse-info-box p {
+            margin-bottom: 0;
+            color: #78350f;
+        }
+
+        /* FAQ */
+        .pulse-faq {
+            margin: 50px 0;
+        }
+
+        .pulse-faq h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .pulse-faq-item {
+            background: var(--pulse-white);
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .pulse-faq-item:hover {
+            box-shadow: 0 4px 20px rgba(255, 164, 43, 0.2);
+        }
+
+        .pulse-faq-question {
+            padding: 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--pulse-light-bg);
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: background 0.3s ease;
+        }
+
+        .pulse-faq-question:hover {
+            background: #fff4e6;
+        }
+
+        .pulse-faq-question i {
+            color: var(--pulse-primary);
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .pulse-faq-item.active .pulse-faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .pulse-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0 25px;
+            background: var(--pulse-white);
+        }
+
+        .pulse-faq-item.active .pulse-faq-answer {
+            max-height: 500px;
+            padding: 25px;
+        }
+
+        /* Témoignages */
+        .pulse-testimonials {
+            margin: 50px 0;
+        }
+
+        .pulse-testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .pulse-testimonial {
+            background: var(--pulse-white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--pulse-primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pulse-testimonial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(255, 164, 43, 0.25);
+        }
+
+        .pulse-testimonial-stars {
+            color: #fbbf24;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .pulse-testimonial-text {
+            font-style: italic;
+            margin-bottom: 15px;
+            color: var(--pulse-dark);
+            line-height: 1.7;
+        }
+
+        .pulse-testimonial-author {
+            font-weight: 600;
+            color: var(--pulse-primary);
+        }
+
+        .pulse-testimonial-company {
+            font-size: 0.9rem;
+            color: var(--pulse-dark);
+        }
+
+        /* CTA */
+        .pulse-cta {
+            background: linear-gradient(135deg, var(--pulse-primary) 0%, #ff8c00 100%);
+            color: var(--pulse-white);
+            padding: 50px 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 50px 0;
+            box-shadow: 0 10px 40px rgba(255, 164, 43, 0.3);
+        }
+
+        .pulse-cta h3 {
+            color: var(--pulse-white);
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .pulse-cta p {
+            font-size: 1.15rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .pulse-cta-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: var(--pulse-white);
+            color: var(--pulse-primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .pulse-cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: var(--pulse-light-bg);
+        }
+
+        /* Partage social */
+        .pulse-social-share {
+            margin: 40px 0;
+            padding: 30px;
+            background: var(--pulse-light-bg);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .pulse-social-share h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .pulse-social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .pulse-social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--pulse-white);
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pulse-social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .pulse-social-btn.facebook {
+            background: #1877f2;
+        }
+
+        .pulse-social-btn.twitter {
+            background: #1da1f2;
+        }
+
+        .pulse-social-btn.linkedin {
+            background: #0a66c2;
+        }
+
+        .pulse-social-btn.whatsapp {
+            background: #25d366;
+        }
+
+        /* Bouton retour en haut */
+        .pulse-back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--pulse-primary) 0%, #ff8c00 100%);
+            color: var(--pulse-white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 9998;
+            box-shadow: 0 4px 15px rgba(255, 164, 43, 0.4);
+            font-size: 1.3rem;
+        }
+
+        .pulse-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pulse-back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 164, 43, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pulse-container {
+                padding: 20px 15px;
+            }
+
+            .pulse-header h1 {
+                font-size: 2rem;
+            }
+
+            .pulse-intro {
+                font-size: 1.05rem;
+            }
+
+            .pulse-summary {
+                font-size: 1rem;
+                padding: 20px;
+            }
+
+            .pulse-section h2 {
+                font-size: 1.7rem;
+            }
+
+            .pulse-section h3 {
+                font-size: 1.4rem;
+            }
+
+            .pulse-table-container {
+                font-size: 0.9rem;
+            }
+
+            .pulse-table th,
+            .pulse-table td {
+                padding: 12px 10px;
+            }
+
+            .pulse-testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pulse-social-buttons {
+                flex-direction: column;
+            }
+
+            .pulse-social-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pulse-back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nettoyage-bureaux-rennes-wrapper">
+        <!-- Barre de progression -->
+        <div class="pulse-progress-container">
+            <div class="pulse-progress-bar"></div>
+        </div>
+        
+        <main class="pulse-container">
+            <!-- En-tête -->
+            <header class="pulse-header">
+                <h1>Nettoyage de bureaux à Rennes : quels services et entreprises choisir ?</h1>
+                <p class="pulse-intro">Les entreprises rennaises recherchent des solutions de nettoyage professionnel pour garantir hygiène, bien-être et productivité. Découvrez les services de nettoyage de bureaux disponibles à Rennes et comment choisir le prestataire adapté à vos besoins.</p>
+                <div class="pulse-summary">
+                    <strong>Si vous êtes pressé(e) :</strong> Les services de nettoyage de bureaux à Rennes incluent l'entretien régulier, la vitrerie professionnelle, la désinfection et les interventions après travaux. Pulse Propreté, entreprise locale haut de gamme, propose des prestations sur-mesure avec devis rapide et disponibilité 7j/7.
+                </div>
+            </header>
+
+            <!-- Table des matières -->
+            <nav class="pulse-toc">
+                <h2><i class="fas fa-list"></i>Sommaire</h2>
+                <ul>
+                    <li><a href="#services-nettoyage">Quels types de services de nettoyage professionnel existe-t-il ?</a></li>
+                    <li><a href="#pulse-proprete">Pourquoi choisir Pulse Propreté à Rennes ?</a></li>
+                    <li><a href="#autres-entreprises">Quelles autres entreprises de nettoyage existent ?</a></li>
+                    <li><a href="#comparatif">Comment comparer les prestataires ?</a></li>
+                    <li><a href="#organiser">Comment organiser le nettoyage de vos bureaux ?</a></li>
+                    <li><a href="#faq">Questions fréquentes</a></li>
+                </ul>
+            </nav>
+
+            <!-- Section 1 -->
+            <section id="services-nettoyage" class="pulse-section">
+                <h2><i class="fas fa-broom"></i>Quels types de services de nettoyage professionnel existe-t-il à Rennes ?</h2>
+                
+                <h3>L'entretien courant est-il adapté à tous les bureaux ?</h3>
+                <p>Oui, l'entretien régulier convient à tous les locaux professionnels. Il comprend le nettoyage quotidien ou hebdomadaire des postes de travail, l'aspiration et le lavage des sols, le dépoussiérage du mobilier et la désinfection des sanitaires. Les entreprises bénéficient également de la gestion des corbeilles et de l'évacuation des déchets.</p>
+
+                <div class="pulse-list">
+                    <h4>Services inclus dans l'entretien courant :</h4>
+                    <ul>
+                        <li>Nettoyage des bureaux, open spaces et salles de réunion</li>
+                        <li>Entretien des sols (carrelage, parquet, moquette)</li>
+                        <li>Vidage des poubelles et tri des déchets</li>
+                        <li>Désinfection des zones de contact (poignées, interrupteurs)</li>
+                        <li>Réapprovisionnement des consommables sanitaires</li>
+                    </ul>
+                </div>
+
+                <div class="pulse-image-container">
+                    <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&h=600&fit=crop" alt="Bureau moderne et propre à Rennes" class="pulse-article-image">
+                    <div class="pulse-image-caption">
+                        Un environnement de travail impeccable favorise la productivité et le bien-être des équipes
+                    </div>
+                </div>
+
+                <h3>Quelles prestations spécialisées sont proposées ?</h3>
+                <p>Les entreprises de nettoyage à Rennes offrent des services techniques avancés. Le nettoyage de vitres utilise des méthodes professionnelles pour les vitrages intérieurs et extérieurs. La désinfection approfondie élimine bactéries et virus sur les surfaces sensibles. Certains prestataires assurent aussi la qualité de l'air et la désodorisation naturelle des espaces.</p>
+
+                <div class="pulse-list">
+                    <h4>Prestations spécialisées disponibles :</h4>
+                    <ul>
+                        <li>Vitrerie professionnelle : lavage des baies vitrées et vitrines</li>
+                        <li>Désinfection complète : sanitaires, cuisines, zones à risque</li>
+                        <li>Traitement des sols : décapage, cristallisation, shampoing moquettes</li>
+                        <li>Hygiène renforcée : cabinets médicaux, espaces de santé</li>
+                    </ul>
+                </div>
+
+                <h3>Que faire après des travaux ou un sinistre ?</h3>
+                <p>Les interventions ponctuelles répondent aux situations exceptionnelles. Le nettoyage de fin de chantier élimine poussières, taches et résidus. En cas de sinistre (incendie, dégât des eaux), les équipes assurent la remise en état complète. Ces prestations urgentes nécessitent réactivité et matériel adapté.</p>
+
+                <div class="pulse-image-container">
+                    <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1200&h=600&fit=crop" alt="Équipe de nettoyage professionnelle en action" class="pulse-article-image">
+                    <div class="pulse-image-caption">
+                        Des équipes qualifiées interviennent rapidement pour les situations d'urgence
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="pulse-proprete" class="pulse-section">
+                <h2><i class="fas fa-star"></i>Pourquoi choisir Pulse Propreté à Rennes ?</h2>
+                
+                <h3>Qu'est-ce qui distingue Pulse Propreté des autres prestataires ?</h3>
+                <p>Pulse Propreté, créée en 2025 à Saint-Armel, se positionne comme l'entreprise de propreté haut de gamme de l'agglomération rennaise. L'entreprise propose un service discret et soigné pour bureaux, commerces, écoles et copropriétés. Sa force réside dans sa réactivité exceptionnelle avec des devis sous 2h et une disponibilité 7j/7 pour les urgences.</p>
+
+                <div class="pulse-info-box">
+                    <h4><i class="fas fa-map-marker-alt"></i>Coordonnées Pulse Propreté :</h4>
+                    <p><strong>Adresse :</strong> 16 rue Anjela Duval, 35230 Saint-Armel<br>
+                    <strong>SIRET :</strong> 945 209 518 00014<br>
+                    <strong>Zone d'intervention :</strong> Rennes et Ille-et-Vilaine (35)</p>
+                </div>
+
+                <h3>Quels services premium propose Pulse Propreté ?</h3>
+                <p>L'entreprise assure l'entretien régulier et approfondi des locaux professionnels. Le nettoyage de vitres utilise des techniques professionnelles pour tous types de surfaces. Les horaires flexibles s'adaptent à la vie de votre entreprise, permettant interventions en journée, soirée ou week-end.</p>
+
+                <div class="pulse-table-container">
+                    <table class="pulse-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th>Fréquence</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Entretien courant</strong></td>
+                                <td>Nettoyage bureaux, sanitaires, sols</td>
+                                <td>Quotidien/Hebdomadaire</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vitrerie</strong></td>
+                                <td>Lavage intérieur/extérieur</td>
+                                <td>Sur demande</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Remise en état</strong></td>
+                                <td>Après travaux, déménagement, sinistre</td>
+                                <td>Ponctuel</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Désinfection</strong></td>
+                                <td>Surfaces, équipements, sanitaires</td>
+                                <td>Régulier/Urgent</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pulse-image-container">
+                    <img src="https://images.unsplash.com/photo-1560264280-88b68371db39?w=1200&h=600&fit=crop" alt="Service de nettoyage premium Pulse Propreté" class="pulse-article-image">
+                    <div class="pulse-image-caption">
+                        Pulse Propreté offre un service haut de gamme avec une attention particulière aux détails
+                    </div>
+                </div>
+
+                <h3>Comment Pulse Propreté garantit-elle un service premium ?</h3>
+                <p>L'entreprise privilégie la qualité sur tous les aspects. Les équipes interviennent discrètement pour ne pas perturber l'activité. Le matériel de nettoyage de pointe assure des résultats impeccables. Les produits éco-responsables respectent l'environnement et la santé des occupants.</p>
+            </section>
+
+            <!-- Section 3 -->
+            <section id="autres-entreprises" class="pulse-section">
+                <h2><i class="fas fa-building"></i>Quelles autres entreprises de nettoyage existent à Rennes ?</h2>
+                
+                <h3>Multiclean 35 : l'approche écologique est-elle efficace ?</h3>
+                <p>Multiclean 35 se spécialise dans le nettoyage écologique des bureaux. L'entreprise utilise exclusivement des produits écolabel et mène une démarche RSE complète. Les services couvrent sols, mobilier, vitres et gestion des déchets avec tri et recyclage. Cette approche durable convient aux entreprises soucieuses de leur impact environnemental.</p>
+
+                <h3>Cleanolia propose-t-elle des solutions innovantes ?</h3>
+                <p>Oui, Cleanolia développe des prestations axées sur la santé au travail. Au-delà du nettoyage régulier, l'entreprise assure la désinfection approfondie et la qualité de l'air intérieur. La désodorisation naturelle et l'aération contrôlée créent des environnements sains. Ces services répondent aux exigences post-pandémie.</p>
+
+                <h3>Nova Clean intervient-elle dans les situations complexes ?</h3>
+                <p>Nova Clean excelle dans les remises en état difficiles. L'entreprise gère le nettoyage industriel, les chantiers extrêmes et les sinistres. Sa polyvalence permet d'intervenir sur tous types de locaux professionnels. Les équipes maîtrisent les techniques avancées (nettoyage vapeur, haute pression).</p>
+
+                <div class="pulse-image-container">
+                    <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?w=1200&h=600&fit=crop" alt="Équipements professionnels de nettoyage" class="pulse-article-image">
+                    <div class="pulse-image-caption">
+                        Les entreprises rennaises utilisent du matériel professionnel de dernière génération
+                    </div>
+                </div>
+
+                <h3>Coup de Propre et BG Propreté offrent-elles de la flexibilité ?</h3>
+                <p>Ces deux entreprises rennaises privilégient les contrats sur-mesure. Elles adaptent leurs prestations à la taille et aux contraintes de chaque client. Les horaires étendus permettent interventions en dehors des heures de bureau. Cette flexibilité convient particulièrement aux petites structures.</p>
+
+                <h3>Cityzen Propreté se distingue-t-elle sur les grandes surfaces ?</h3>
+                <p>Cityzen Propreté traite efficacement les grands volumes. L'entreprise nettoie bureaux, commerces et espaces collectifs avec des équipes dimensionnées. Sa spécialité vitrerie couvre les façades et baies vitrées de grande hauteur. Les interventions rapides minimisent les perturbations.</p>
+            </section>
+
+            <!-- Section 4 -->
+            <section id="comparatif" class="pulse-section">
+                <h2><i class="fas fa-chart-bar"></i>Comment comparer les prestataires de nettoyage à Rennes ?</h2>
+                
+                <h3>Quel tableau comparatif utiliser pour choisir ?</h3>
+                <div class="pulse-table-container">
+                    <table class="pulse-table">
+                        <thead>
+                            <tr>
+                                <th>Société</th>
+                                <th>Spécialité</th>
+                                <th>Points forts</th>
+                                <th>Disponibilité</th>
+                                <th>Type d'intervention</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Pulse Propreté</strong></td>
+                                <td>Haut de gamme</td>
+                                <td>Réactivité, service premium</td>
+                                <td>7j/7 + urgences</td>
+                                <td>Régulière/Ponctuelle</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Multiclean 35</strong></td>
+                                <td>Écologique</td>
+                                <td>Produits écolabel, RSE</td>
+                                <td>Sur devis</td>
+                                <td>Régulière/Ponctuelle</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cleanolia</strong></td>
+                                <td>Désinfection</td>
+                                <td>Qualité de l'air</td>
+                                <td>Devis rapide</td>
+                                <td>Régulière/Ponctuelle</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nova Clean</strong></td>
+                                <td>Remise en état</td>
+                                <td>Situations extrêmes</td>
+                                <td>Standard</td>
+                                <td>Ponctuelle/Régulière</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Coup de Propre</strong></td>
+                                <td>Sur-mesure</td>
+                                <td>Flexibilité horaires</td>
+                                <td>Horaires étendus</td>
+                                <td>Régulière/Ponctuelle</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cityzen Propreté</strong></td>
+                                <td>Grands volumes</td>
+                                <td>Vitrerie, surfaces</td>
+                                <td>Standard</td>
+                                <td>Régulière/Ponctuelle</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Quels critères prioriser dans le choix ?</h3>
+                <p>Évaluez d'abord vos besoins précis : surface des locaux, fréquence souhaitée et budget disponible. Comparez ensuite les devis et les délais de réponse. La réactivité du prestataire garantit une gestion efficace des imprévus. Privilégiez les entreprises locales comme Pulse Propreté pour un suivi personnalisé et une meilleure connaissance du terrain rennais.</p>
+
+                <div class="pulse-checklist">
+                    <h4>Checklist de sélection :</h4>
+                    <ul>
+                        <li>Taille des locaux à nettoyer</li>
+                        <li>Fréquence d'intervention nécessaire (quotidienne, hebdomadaire)</li>
+                        <li>Budget alloué à l'entretien</li>
+                        <li>Exigences écologiques (produits, démarche RSE)</li>
+                        <li>Horaires d'intervention (jour, soir, week-end)</li>
+                        <li>Besoins spécifiques (vitrerie, désinfection)</li>
+                        <li>Délai de réactivité en cas d'urgence</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 5 -->
+            <section id="organiser" class="pulse-section">
+                <h2><i class="fas fa-tasks"></i>Comment organiser le nettoyage de vos bureaux à Rennes ?</h2>
+                
+                <h3>Étape 1 : Évaluez vos besoins précis</h3>
+                <p>Mesurez la surface totale de vos locaux et identifiez les zones à nettoyer. Listez les prestations souhaitées (sols, sanitaires, vitres, désinfection). Déterminez la fréquence d'intervention qui correspond à votre activité. Ces informations permettront d'obtenir des devis précis et comparables.</p>
+
+                <h3>Étape 2 : Contactez plusieurs prestataires</h3>
+                <p>Demandez au minimum trois devis auprès d'entreprises différentes. Pulse Propreté, avec sa réponse sous 2h, facilite cette démarche. Précisez vos contraintes horaires et vos exigences qualitatives. N'hésitez pas à poser des questions sur les produits utilisés et le matériel déployé.</p>
+
+                <h3>Étape 3 : Comparez les offres et références</h3>
+                <p>Analysez les devis en détail : prestations incluses, fréquence, tarifs et conditions. Vérifiez les certifications (ISO 9001) et les assurances professionnelles. Demandez des références clients dans votre secteur d'activité. Les avis et retours d'expérience éclairent sur la fiabilité du prestataire.</p>
+
+                <h3>Étape 4 : Définissez les modalités d'intervention</h3>
+                <p>Établissez avec l'entreprise choisie un planning d'intervention précis. Déterminez les horaires optimaux (soir, matin, week-end) pour ne pas perturber l'activité. Désignez un interlocuteur dans votre entreprise pour le suivi. Pulse Propreté propose un suivi personnalisé et des ajustements si nécessaire.</p>
+
+                <h3>Étape 5 : Suivez et ajustez le service</h3>
+                <p>Organisez des points réguliers avec votre prestataire pour évaluer la qualité. Signalez rapidement tout besoin d'ajustement ou toute insatisfaction. Un bon partenariat propreté repose sur la communication. Les entreprises locales comme Pulse Propreté privilégient cette proximité et cette réactivité.</p>
+
+                <div class="pulse-image-container">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=600&fit=crop" alt="Organisation et planification du nettoyage de bureaux" class="pulse-article-image">
+                    <div class="pulse-image-caption">
+                        Une organisation rigoureuse garantit la satisfaction et l'efficacité du service de nettoyage
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section id="faq" class="pulse-faq">
+                <h2><i class="fas fa-question-circle"></i>FAQ : Vos questions sur le nettoyage de bureaux à Rennes</h2>
+                
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>Quels sont les tarifs du nettoyage de bureaux à Rennes ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>Les tarifs varient selon la surface, la fréquence et les prestations demandées. Pour un bureau de 100 m², comptez entre 150 et 400 € par mois en entretien régulier. Les interventions ponctuelles (remise en état, fin de chantier) se facturent généralement entre 20 et 35 € de l'heure. Demandez plusieurs devis pour comparer les offres.</p>
+                    </div>
+                </div>
+
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>Quels services inclut un contrat de nettoyage professionnel ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>Un contrat standard comprend l'aspiration et le lavage des sols, le dépoussiérage des surfaces et du mobilier, la désinfection des sanitaires et le vidage des poubelles. Les prestations complémentaires (vitrerie, désinfection approfondie, shampooing moquettes) s'ajoutent sur demande. Pulse Propreté propose des contrats modulables selon vos besoins.</p>
+                    </div>
+                </div>
+
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>Quelles entreprises proposent un nettoyage écologique à Rennes ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>Multiclean 35 se spécialise dans l'approche écologique avec des produits certifiés écolabel. Pulse Propreté utilise également des produits éco-responsables dans ses prestations premium. Ces entreprises intègrent le tri et le recyclage des déchets dans leurs services. La démarche RSE devient un critère de choix important pour les entreprises rennaises.</p>
+                    </div>
+                </div>
+
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>Quelle société choisir pour un nettoyage de vitres à Rennes ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>Pulse Propreté excelle dans la vitrerie professionnelle avec des méthodes adaptées aux vitrages intérieurs et extérieurs. Cityzen Propreté traite efficacement les grandes surfaces vitrées et les façades. Multiclean 35 intègre le nettoyage de vitres dans ses prestations globales. Le choix dépend de la complexité des surfaces (hauteur, accessibilité).</p>
+                    </div>
+                </div>
+
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>Comment obtenir un devis rapide à Rennes ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>Pulse Propreté garantit une réponse sous 2 heures, ce qui en fait le prestataire le plus réactif de Rennes. Cleanolia propose également des devis rapides pour ses services de désinfection. Contactez directement les entreprises par téléphone ou formulaire en ligne en précisant votre surface et vos besoins. Les devis sont gratuits et sans engagement.</p>
+                    </div>
+                </div>
+
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>À quelle fréquence faire nettoyer ses bureaux ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>La fréquence dépend de la taille de l'équipe et de l'activité. Les bureaux avec passage fréquent nécessitent un nettoyage quotidien ou tri-hebdomadaire. Les petites structures choisissent souvent un rythme hebdomadaire. Pulse Propreté adapte ses interventions à votre activité pour optimiser le budget tout en maintenant l'hygiène.</p>
+                    </div>
+                </div>
+
+                <div class="pulse-faq-item">
+                    <div class="pulse-faq-question">
+                        <span>Les entreprises interviennent-elles en urgence ?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="pulse-faq-answer">
+                        <p>Pulse Propreté assure une disponibilité 7j/7 pour les urgences (sinistre, événement imprévu). Nova Clean intervient rapidement sur les remises en état après dégâts. La plupart des prestataires rennais proposent des interventions ponctuelles en dehors des contrats réguliers. Vérifiez cette disponibilité lors de la sélection du prestataire.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Témoignages -->
+            <section class="pulse-testimonials">
+                <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-comments"></i>Témoignages clients</h2>
+                <div class="pulse-testimonial-grid">
+                    <div class="pulse-testimonial">
+                        <div class="pulse-testimonial-stars">★★★★★</div>
+                        <p class="pulse-testimonial-text">"Pulse Propreté a transformé nos espaces de travail. L'équipe est discrète, efficace et toujours à l'heure. Leur réactivité pour les devis et les urgences est vraiment exceptionnelle. Je recommande vivement leurs services premium."</p>
+                        <p class="pulse-testimonial-author">Sophie Leblanc</p>
+                        <p class="pulse-testimonial-company">Directrice RH, Entreprise Tech à Rennes</p>
+                    </div>
+
+                    <div class="pulse-testimonial">
+                        <div class="pulse-testimonial-stars">★★★★★</div>
+                        <p class="pulse-testimonial-text">"Nous travaillons avec Multiclean 35 depuis deux ans. Leur approche écologique correspond parfaitement à nos valeurs d'entreprise. Les produits écolabel n'altèrent en rien la qualité du nettoyage. Une vraie démarche RSE cohérente."</p>
+                        <p class="pulse-testimonial-author">Marc Durand</p>
+                        <p class="pulse-testimonial-company">Gérant, Cabinet d'architectes</p>
+                    </div>
+
+                    <div class="pulse-testimonial">
+                        <div class="pulse-testimonial-stars">★★★★★</div>
+                        <p class="pulse-testimonial-text">"Après un dégât des eaux, Nova Clean est intervenue en urgence pour remettre nos bureaux en état. Leur professionnalisme et leur maîtrise technique nous ont permis de reprendre l'activité rapidement. Un grand merci à toute l'équipe."</p>
+                        <p class="pulse-testimonial-author">Émilie Martin</p>
+                        <p class="pulse-testimonial-company">Responsable administrative, PME Rennaise</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA -->
+            <div class="pulse-cta">
+                <h3>Prêt à améliorer la propreté de vos bureaux ?</h3>
+                <p>Contactez Pulse Propreté dès aujourd'hui et obtenez un devis personnalisé sous 2 heures. Service premium, disponibilité 7j/7 et satisfaction garantie.</p>
+                <a href="#contact" class="pulse-cta-button">Demander un devis gratuit</a>
+            </div>
+
+            <!-- Conclusion -->
+            <section class="pulse-section">
+                <h2><i class="fas fa-check-circle"></i>Conclusion : trouvez le partenaire propreté idéal à Rennes</h2>
+                <p>Les services de nettoyage de bureaux à Rennes répondent à tous les besoins professionnels. L'entretien régulier, les prestations spécialisées et les interventions d'urgence garantissent des locaux impeccables. Chaque entreprise rennaise apporte sa spécialité : écologie, réactivité, remise en état ou grands volumes.</p>
+                
+                <p>Pour un service premium avec réactivité exceptionnelle, Pulse Propreté se démarque par ses devis sous 2h, sa disponibilité 7j/7 et son ancrage local à Saint-Armel. Les autres prestataires offrent des alternatives fiables selon vos priorités (écologie, budget, spécialisation).</p>
+                
+                <p>Demandez dès aujourd'hui un devis personnalisé auprès d'une entreprise de nettoyage professionnel à Rennes. Comparez les offres, vérifiez les références et choisissez le partenaire qui garantira propreté, bien-être et productivité dans vos bureaux de l'Ille-et-Vilaine.</p>
+            </section>
+
+            <!-- Partage social -->
+            <div class="pulse-social-share">
+                <h3>Partagez cet article</h3>
+                <div class="pulse-social-buttons">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=" class="pulse-social-btn facebook" target="_blank" rel="noopener">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Partager</span>
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?url=" class="pulse-social-btn twitter" target="_blank" rel="noopener">
+                        <i class="fab fa-twitter"></i>
+                        <span>Twitter</span>
+                    </a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=" class="pulse-social-btn linkedin" target="_blank" rel="noopener">
+                        <i class="fab fa-linkedin-in"></i>
+                        <span>LinkedIn</span>
+                    </a>
+                    <a href="https://wa.me/?text=" class="pulse-social-btn whatsapp" target="_blank" rel="noopener">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Bouton retour en haut -->
+        <button class="pulse-back-to-top" aria-label="Retour en haut">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+        
+        <!-- JSON-LD FAQ -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Quels sont les tarifs du nettoyage de bureaux à Rennes ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Les tarifs varient selon la surface, la fréquence et les prestations demandées. Pour un bureau de 100 m², comptez entre 150 et 400 € par mois en entretien régulier. Les interventions ponctuelles se facturent entre 20 et 35 € de l'heure."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Quels services inclut un contrat de nettoyage professionnel ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Un contrat standard comprend l'aspiration et le lavage des sols, le dépoussiérage des surfaces, la désinfection des sanitaires et le vidage des poubelles. Les prestations complémentaires s'ajoutent sur demande."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Comment obtenir un devis rapide à Rennes ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pulse Propreté garantit une réponse sous 2 heures. Contactez directement les entreprises par téléphone ou formulaire en ligne en précisant votre surface et vos besoins. Les devis sont gratuits et sans engagement."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Quelle société choisir pour un nettoyage de vitres à Rennes ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pulse Propreté excelle dans la vitrerie professionnelle avec des méthodes adaptées. Cityzen Propreté traite efficacement les grandes surfaces vitrées. Le choix dépend de la complexité des surfaces."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Quelles entreprises proposent un nettoyage écologique à Rennes ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Multiclean 35 se spécialise dans l'approche écologique avec des produits certifiés écolabel. Pulse Propreté utilise également des produits éco-responsables dans ses prestations premium."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "À quelle fréquence faire nettoyer ses bureaux ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "La fréquence dépend de la taille de l'équipe et de l'activité. Les bureaux avec passage fréquent nécessitent un nettoyage quotidien ou tri-hebdomadaire. Les petites structures choisissent souvent un rythme hebdomadaire."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Les entreprises interviennent-elles en urgence ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pulse Propreté assure une disponibilité 7j/7 pour les urgences. Nova Clean intervient rapidement sur les remises en état après dégâts. La plupart des prestataires rennais proposent des interventions ponctuelles en dehors des contrats réguliers."
+              }
+            }
+          ]
+        }
+        </script>
+        
+        <!-- JSON-LD LocalBusiness -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "Pulse Propreté",
+          "image": "https://pulseproprete.com/wp-content/uploads/2025/04/pulse-proprete-logo.png",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "16 rue Anjela Duval",
+            "addressLocality": "Saint-Armel",
+            "postalCode": "35230",
+            "addressCountry": "FR"
+          },
+          "priceRange": "€€€",
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          },
+          "areaServed": {
+            "@type": "City",
+            "name": "Rennes"
+          },
+          "description": "Entreprise de nettoyage haut de gamme à Rennes. Services premium : entretien bureaux, vitrerie, désinfection. Devis sous 2h, disponibilité 7j/7."
+        }
+        </script>
+        
+        <!-- JSON-LD Article -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "Nettoyage de bureaux à Rennes : quels services et entreprises choisir ?",
+          "author": {
+            "@type": "Organization",
+            "name": "Pulse Propreté"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Pulse Propreté",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://pulseproprete.com/wp-content/uploads/2025/04/pulse-proprete-logo.png"
+            }
+          },
+          "datePublished": "2025-10-11",
+          "dateModified": "2025-10-11",
+          "description": "Découvrez les services de nettoyage de bureaux à Rennes : Pulse Propreté, Multiclean 35, Cleanolia. Devis rapide, intervention 7j/7."
+        }
+        </script>
+        
+        <!-- JSON-LD HowTo -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "Comment organiser le nettoyage de vos bureaux à Rennes",
+          "description": "Guide étape par étape pour sélectionner et organiser un service de nettoyage professionnel pour vos bureaux à Rennes",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Contactez plusieurs prestataires",
+              "text": "Demandez au minimum trois devis auprès d'entreprises différentes. Précisez vos contraintes horaires et vos exigences qualitatives."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Comparez les offres et références",
+              "text": "Analysez les devis en détail, vérifiez les certifications et demandez des références clients dans votre secteur d'activité."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Définissez les modalités d'intervention",
+              "text": "Établissez un planning d'intervention précis avec l'entreprise choisie et désignez un interlocuteur pour le suivi."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Suivez et ajustez le service",
+              "text": "Organisez des points réguliers avec votre prestataire pour évaluer la qualité et signalez rapidement tout besoin d'ajustement."
+            }
+          ]
+        }
+        </script>
+        
+        <!-- JavaScript -->
+        <script>
+            (function() {
+                'use strict';
+                
+                // Barre de progression
+                function updateProgressBar() {
+                    const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scrolled = (winScroll / height) * 100;
+                    document.querySelector('.pulse-progress-bar').style.width = scrolled + '%';
+                }
+                
+                window.addEventListener('scroll', updateProgressBar);
+                
+                // Animation des sections au scroll
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -100px 0px'
+                };
+                
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+                
+                document.querySelectorAll('.pulse-section').forEach(function(section) {
+                    observer.observe(section);
+                });
+                
+                // FAQ Toggle
+                document.querySelectorAll('.pulse-faq-question').forEach(function(question) {
+                    question.addEventListener('click', function() {
+                        const item = this.parentElement;
+                        const isActive = item.classList.contains('active');
+                        
+                        // Fermer tous les items
+                        document.querySelectorAll('.pulse-faq-item').forEach(function(faqItem) {
+                            faqItem.classList.remove('active');
+                        });
+                        
+                        // Ouvrir l'item cliqué s'il n'était pas actif
+                        if (!isActive) {
+                            item.classList.add('active');
+                        }
+                    });
+                });
+                
+                // Bouton retour en haut
+                const backToTopBtn = document.querySelector('.pulse-back-to-top');
+                
+                window.addEventListener('scroll', function() {
+                    if (window.pageYOffset > 300) {
+                        backToTopBtn.classList.add('visible');
+                    } else {
+                        backToTopBtn.classList.remove('visible');
+                    }
+                });
+                
+                backToTopBtn.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                // Smooth scroll pour les ancres
+                document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+                    anchor.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        if (targetId === '#' || targetId === '#contact') return;
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            const offsetTop = targetElement.offsetTop - 20;
+                            window.scrollTo({
+                                top: offsetTop,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+                
+                // Mise à jour des URLs de partage social
+                const currentUrl = encodeURIComponent(window.location.href);
+                const pageTitle = encodeURIComponent(document.title);
+                
+                document.querySelector('.pulse-social-btn.facebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + currentUrl;
+                document.querySelector('.pulse-social-btn.twitter').href = 'https://twitter.com/intent/tweet?url=' + currentUrl + '&text=' + pageTitle;
+                document.querySelector('.pulse-social-btn.linkedin').href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + currentUrl;
+                document.querySelector('.pulse-social-btn.whatsapp').href = 'https://wa.me/?text=' + pageTitle + ' ' + currentUrl;
+                
+            })();
+        </script>
+    </div>
+</body>
+</html> "Évaluez vos besoins précis",
+              "text": "Mesurez la surface totale de vos locaux et identifiez les zones à nettoyer. Listez les prestations souhaitées et déterminez la fréquence d'intervention."
+            },
+            {
+              "@type": "HowToStep",
+              "name":

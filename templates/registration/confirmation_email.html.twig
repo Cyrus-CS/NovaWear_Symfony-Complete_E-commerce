@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmez votre adresse email</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #f0f2f5;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrapper {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      padding: 36px 40px 28px;
+      text-align: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    /* GIF ZONE */
+    .gif-zone {
+      background: linear-gradient(180deg, #1e3a5f 0%, #f0f2f5 100%);
+      padding: 0px 0 30px;
+      text-align: center;
+    }
+
+    .gif-zone img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 30px rgba(59,130,246,0.3);
+    }
+
+    /* GIF placeholder si pas encore de gif */
+    .gif-placeholder {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 30px rgba(59,130,246,0.3);
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+    }
+
+    /* BODY */
+    .body {
+      padding: 40px 48px;
+    }
+
+    .greeting {
+      font-size: 13px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: #0f172a;
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+
+    .text {
+      font-size: 15px;
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .text strong {
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    /* CTA BUTTON */
+    .cta-wrapper {
+      text-align: center;
+      margin: 36px 0;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px 48px;
+      border-radius: 50px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 24px rgba(59,130,246,0.4);
+      transition: all 0.2s;
+    }
+
+    /* EXPIRY NOTE */
+    .expiry-note {
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: -16px;
+      margin-bottom: 32px;
+    }
+
+    .expiry-note span {
+      background: #f1f5f9;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* FALLBACK LINK */
+    .fallback {
+      background: #f8fafc;
+      border-left: 3px solid #3b82f6;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+
+    .fallback p {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .fallback a {
+      font-size: 12px;
+      color: #3b82f6;
+      word-break: break-all;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 28px 48px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .footer a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fdf4;
+      color: #16a34a;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <!-- Remplace par ton logo SVG ou img -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <span class="brand-name">NovaWear</span>
+      </div>
+    </div>
+
+    <!-- GIF ZONE -->
+    <div class="gif-zone">
+
+        <!-- Remplace le placeholder par ton gif :  
+        <img src="{{ asset("images/email.gif")}}" alt="Bienvenue" />--> 
+      
+      <div class="gif-placeholder">✉️</div>
+    </div>
+
+    <!-- BODY -->
+    <div class="body">
+      <p class="greeting">Confirmation de compte</p>
+      <h1 class="title">Confirmez votre<br>adresse email</h1>
+      <div class="divider"></div>
+
+      <p class="text">
+        Bonjour,<br><br>
+        Merci de vous être inscrit sur <strong>NovaWear</strong>. Vous êtes à un clic de finaliser la création de votre compte.
+      </p>
+
+      <p class="text">
+        Cliquez sur le bouton ci-dessous pour confirmer votre adresse email et activer votre compte. Une fois vérifié, vous pourrez vous connecter et profiter de toutes les fonctionnalités.
+      </p>
+
+      <!-- BOUTON PRINCIPAL -->
+      <div class="cta-wrapper">
+        <a href="{{ signedUrl|raw }}" class="cta-button">
+          ✓ &nbsp; Confirmer mon adresse email
+        </a>
+      </div>
+
+      <!-- DATE D'EXPIRATION -->
+      <p class="expiry-note">
+        <span>
+          ⏱ Ce lien expire {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}
+        </span>
+      </p>
+
+      <!-- LIEN FALLBACK si le bouton ne fonctionne pas -->
+      <div class="fallback">
+        <p>Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</p>
+        <a href="{{ signedUrl|raw }}">{{ signedUrl }}</a>
+      </div>
+
+      <p class="text" style="font-size:13px; color:#94a3b8;">
+        Si vous n'avez pas créé de compte sur NovaWear, vous pouvez ignorer cet email en toute sécurité.
+      </p>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Cet email vous a été envoyé par <strong>NovaWear</strong>.</p>
+      <p style="margin-top:6px;">© {{ "now"|date("Y") }} NovaWear. Tous droits réservés.</p>
+      <div class="security-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Email sécurisé · Lien signé
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

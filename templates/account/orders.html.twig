@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Orders | NovaWear{% endblock %}
+
+{% block body %}
+
+{# ── HERO ──────────────────────────────────────────────────── #}
+<div class="ac-hero position-relative overflow-hidden">
+  <div class="ac-hero__overlay"></div>
+  <div class="container position-relative z-1 py-5 text-center text-white">
+    <h1 class="ac-hero__title fw-bold mb-2">My Account</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a href="{{ path('home') }}" class="text-white text-opacity-75 text-decoration-none">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{{ path('account.dashboard') }}" class="text-white text-opacity-75 text-decoration-none">My Account</a>
+        </li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Orders</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="bg-white py-5">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      {# ── SIDEBAR ─────────────────────────────────────────── #}
+      <div class="col-lg-3">
+        <p class="ac-sidebar-title mb-3">MY ACCOUNT</p>
+        <nav class="ac-sidebar-nav">
+          <a href="{{ path('account.dashboard') }}"  class="ac-nav-item">Dashboard</a>
+          <a href="{{ path('account.orders') }}"     class="ac-nav-item ac-nav-item--active">Orders</a>
+          <a href="{{ path('account.addresses') }}"  class="ac-nav-item">Addresses</a>
+          <a href="{{ path('account.details') }}"    class="ac-nav-item">Account details</a>
+          <a href="{{ path('account.wishlist') }}"   class="ac-nav-item">Wishlist</a>
+          <a href="{{ path('app_logout') }}"         class="ac-nav-item ac-nav-item--logout">Logout</a>
+        </nav>
+      </div>
+
+      {# ── CONTENU ─────────────────────────────────────────── #}
+      <div class="col-lg-9">
+
+        <h2 class="h5 fw-bold mb-4">Orders</h2>
+
+        {% if orders|length == 0 %}
+          <div class="text-center py-5">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none"
+                 stroke="#ddd" stroke-width="1.2" class="mb-3">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+            </svg>
+            <p class="text-muted small mb-3">No orders have been made yet.</p>
+            <a href="{{ path('home') }}" class="ac-btn-primary px-4">Browse products</a>
+          </div>
+
+        {% else %}
+          <div class="table-responsive">
+            <table class="table ac-orders-table align-middle">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                  <tr>
+                    <td class="fw-semibold font-monospace small">#{{ order.number }}</td>
+                    <td class="small text-muted">{{ order.createdAt|date('F j, Y') }}</td>
+                    <td>
+                      <span class="cfm-status cfm-status--{{ order.status.value }}">
+                        {{ order.status.value|capitalize }}
+                      </span>
+                    </td>
+                    <td class="fw-semibold small">
+                      {{ order.totalTtc|number_format(2, '.', '') }}
+                      <span class="text-muted fw-normal">{{ order.currency }}</span>
+                      <span class="text-muted fw-normal">
+                        for {{ order.orderItems|length }} item{{ order.orderItems|length > 1 ? 's' : '' }}
+                      </span>
+                    </td>
+                    <td>
+                      <a href="{{ path('account.order_show', {number: order.number}) }}"
+                         class="ac-btn-view small">View</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    /* Hero + sidebar (même CSS que dashboard) */
+    .ac-hero {
+      background: url('{{ asset('images/account-hero.jpg') }}') center/cover no-repeat;
+      min-height: 200px;
+    }
+    .ac-hero__overlay { position:absolute;inset:0;background:rgba(0,0,0,.45); }
+    .ac-hero__title   { font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-1px; }
+    .breadcrumb-item+.breadcrumb-item::before { color:rgba(255,255,255,.6);content:'/'; }
+
+    .ac-sidebar-title { font-size:.7rem;font-weight:800;letter-spacing:1.5px;color:#111; }
+    .ac-sidebar-nav   { display:flex;flex-direction:column; }
+    .ac-nav-item {
+      display:block;padding:10px 16px;font-size:.875rem;color:#333;text-decoration:none;
+      border-left:3px solid transparent;transition:background .15s,border-color .15s,color .15s;
+    }
+    .ac-nav-item:hover       { background:#f7f7f7;color:#111; }
+    .ac-nav-item--active     { background:#f0f0f0;border-left-color:#111;font-weight:700;color:#111; }
+    .ac-nav-item--logout     { color:#e63e3e; }
+    .ac-nav-item--logout:hover { background:#fff5f5;color:#c93333; }
+
+    /* Table */
+    .ac-orders-table thead th {
+      font-size:.75rem;font-weight:700;letter-spacing:.5px;
+      text-transform:uppercase;color:#888;border-bottom:2px solid #eee;
+      padding-bottom:12px;
+    }
+    .ac-orders-table tbody tr { border-bottom:1px solid #f0f0f0; }
+    .ac-orders-table tbody tr:last-child { border-bottom:none; }
+
+    /* Statut badge (réutilise les classes cfm-status de confirmation) */
+    .cfm-status { display:inline-block;padding:3px 10px;border-radius:20px;font-size:.73rem;font-weight:700;letter-spacing:.3px;text-transform:capitalize; }
+    .cfm-status--pending    { background:#fff3e0;color:#e65100; }
+    .cfm-status--processing { background:#e3f2fd;color:#1565c0; }
+    .cfm-status--shipped    { background:#e8f5e9;color:#2e7d32; }
+    .cfm-status--delivered  { background:#e8f5e9;color:#1b5e20; }
+    .cfm-status--canceled   { background:#fce4ec;color:#b71c1c; }
+
+    /* Bouton View */
+    .ac-btn-view {
+      display:inline-block;padding:5px 16px;border:1px solid #111;border-radius:3px;
+      color:#111;font-weight:600;font-size:.75rem;text-decoration:none;letter-spacing:.5px;
+      transition:background .2s,color .2s;
+    }
+    .ac-btn-view:hover { background:#111;color:#fff; }
+
+    /* Bouton Browse */
+    .ac-btn-primary {
+      display:inline-block;padding:11px 32px;background:#e63e3e;color:#fff;border-radius:3px;
+      font-size:.8rem;font-weight:700;letter-spacing:1px;text-decoration:none;text-transform:uppercase;
+      transition:background .2s;
+    }
+    .ac-btn-primary:hover { background:#c93333;color:#fff; }
+  </style>
+{% endblock %}

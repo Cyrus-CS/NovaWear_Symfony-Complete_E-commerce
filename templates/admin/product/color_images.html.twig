@@ -1,0 +1,196 @@
+{# templates/admin/product/color_images.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Images par couleur | {{ product.name }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+
+  {# ── En-tête ── #}
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="h3 mb-0">🎨 Images par couleur</h1>
+      <p class="text-muted mb-0 text-center">{{ product.name }}</p>
+    </div>
+    <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-outline-secondary">
+      ← Retour au produit
+    </a>
+  </div>
+
+  {# ── Flash messages ── #}
+  {% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endfor %}
+
+  {# ── Pas de couleurs ── #}
+  {% if colors|length == 0 %}
+    <div class="alert alert-warning">
+      Ce produit n'a aucune couleur associée.
+      <a href="{{ path('app_product_edit', {id: product.id}) }}">Ajouter des couleurs →</a>
+    </div>
+  {% endif %}
+
+  {# ── Un bloc par couleur ── #}
+  {% for color in colors %}
+    <div class="card mb-4 border-0 shadow-sm">
+
+      {# En-tête du bloc couleur #}
+      <div class="card-header d-flex align-items-center gap-3 bg-white border-bottom">
+        <span
+          class="rounded-circle d-inline-block border"
+          style="width:28px; height:28px; background-color: {{ color.hexCode }};"
+        ></span>
+        <strong>{{ color.name }}</strong>
+        <small class="text-muted">{{ color.hexCode }}</small>
+
+        {# Badge si des images existent déjà pour cette couleur #}
+        {% if existingImages[color.id] is defined and existingImages[color.id]|length > 0 %}
+          <span class="badge bg-success ms-auto">
+            {{ existingImages[color.id]|length }} image(s) existante(s)
+          </span>
+        {% else %}
+          <span class="badge bg-secondary ms-auto">Aucune image</span>
+        {% endif %}
+      </div>
+
+      <div class="card-body">
+        <div class="row g-4">
+
+          {# ── Colonne gauche : images existantes ── #}
+          <div class="col-md-6">
+            <h6 class="fw-semibold mb-3">Images actuelles</h6>
+
+            {% if existingImages[color.id] is defined and existingImages[color.id]|length > 0 %}
+              <div class="d-flex flex-wrap gap-2">
+                {% for image in existingImages[color.id] %}
+                  <div class="position-relative">
+                    <img
+                      src="{{ asset('uploads/images/products/' ~ image.path) }}"
+                      alt="{{ product.name }}"
+                      class="rounded border"
+                      style="width: 90px; height: 90px; object-fit: cover;"
+                    >
+                    {# Badge "Principale" si isMain #}
+                    {% if image.isMain %}
+                      <span
+                        class="position-absolute top-0 start-0 badge bg-primary"
+                        style="font-size: 9px;"
+                      >⭐ Main</span>
+                    {% endif %}
+                    {# Bouton supprimer #}
+                    
+                     <form method="post" action="{{ path('admin_product_image_delete', {id: image.id}) }}"
+                      onsubmit="return confirm('Supprimer cette image ?')" class="d-inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+                        <button
+                            type="submit"
+                            class="position-absolute top-0 end-0 btn btn-danger btn-sm p-0"
+                            style="width:18px; height:18px; font-size:10px; line-height:18px;"
+                        >×</button>
+                      </form>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="text-muted fst-italic">Aucune image pour cette couleur.</p>
+            {% endif %}
+          </div>
+          
+          {# ── Colonne droite : formulaire variante + images ── #}
+        <div class="col-md-6">
+          <h6 class="fw-semibold mb-3">Variante et images</h6>
+
+          {% set form = formViews[color.id] %}
+
+          {{ form_start(form, {
+            action: path('admin_product_color_images', {slug: product.slug}),
+            method: 'POST',
+            attr: { enctype: 'multipart/form-data' }
+          }) }}
+
+            <input type="hidden" name="color_id" value="{{ color.id }}">
+
+            {{ form_errors(form) }}
+
+            {# Prix #}
+            <div class="mb-3">
+              <label class="form-label fw-medium">Prix (cette couleur)</label>
+              {{ form_widget(form.price, {'attr': {'class': 'form-control form-control-sm'}}) }}
+              <small class="text-muted d-block">
+                Laisse vide pour utiliser le prix du produit ({{ product.price }}).
+              </small>
+              {{ form_errors(form.price) }}
+            </div>
+
+            {# Prix barré #}
+            <div class="mb-3">
+              <label class="form-label fw-medium">Prix barré (optionnel)</label>
+              {{ form_widget(form.compareAtPrice, {'attr': {'class': 'form-control form-control-sm'}}) }}
+              <small class="text-muted d-block">
+                Laisse vide pour utiliser le prix barré du produit.
+              </small>
+              {{ form_errors(form.compareAtPrice) }}
+            </div>
+
+            {# Stock #}
+            <div class="mb-3">
+              <label class="form-label fw-medium">Stock (cette couleur)</label>
+              {{ form_widget(form.stock, {'attr': {'class': 'form-control form-control-sm'}}) }}
+              <small class="text-muted d-block">
+                Laisse vide pour utiliser le stock global du produit ({{ product.stock }}).
+              </small>
+              {{ form_errors(form.stock) }}
+            </div>
+
+            {# Tailles disponibles #}
+            <div class="mb-3">
+              <label class="form-label fw-medium">Tailles disponibles</label>
+              {{ form_widget(form.sizes) }}
+              <small class="text-muted d-block">
+                Sélectionne les tailles proposées pour cette couleur. Les autres seront affichées en grisé côté front.
+              </small>
+              {{ form_errors(form.sizes) }}
+            </div>
+
+            <hr class="my-3">
+
+            <h6 class="fw-semibold mb-2">Images</h6>
+
+            {# Image principale #}
+            <div class="mb-3">
+              <label class="form-label fw-medium">
+                ⭐ Image principale
+                <small class="text-muted fw-normal">(remplace l'actuelle si elle existe)</small>
+              </label>
+              {{ form_widget(form.mainImage, {
+                'attr': {'class': 'form-control form-control-sm'}
+              }) }}
+              {{ form_errors(form.mainImage) }}
+            </div>
+
+            {# Images secondaires #}
+            <div class="mb-3">
+              <label class="form-label fw-medium">
+                📸 Images secondaires
+                <small class="text-muted fw-normal">(sélection multiple)</small>
+              </label>
+              {{ form_widget(form.secondaryImages, {
+                'attr': {'class': 'form-control form-control-sm'}
+              }) }}
+              {{ form_errors(form.secondaryImages) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm">
+              💾 Enregistrer pour {{ color.name }}
+            </button>
+
+          {{ form_end(form) }}
+        </div>
+          
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+Il y a pas mal de choses à changer. Tout d'abord merci parce que le code sur les catégories fonctionne. 
+
+* Pour la page single product, tout le monde peut mettre un commentaire alors que c'est pas ce que je veux. Il faut que l'utilisateur soit connecté pour pouvoir mettre un commentaire (je t'enverrai le controller pour review et la vue de la page single product, mais tu ne corrigeras que la partie essentielle, pas besoin de me refaire le code de la page).
+
+* Tu vas refaire le haut de ma page d'accueil (hero section) en utilisant le modèle de l'image que je vais t'envoyer (la première image). Tu vas mettre une image en background avec du texte qui sera à gauche. La deuxième section sera comme dans l'image : 3 div qui auront une image (dirigée vers la droite) en background, un titre et un texte à gauche.
+
+* Pour l'affiche des produits ainsi que son hover (l'image change), c'est très bien, il y a juste un petit détail lors du hover : quand l'image change, il y a un moment où, quand on survole l'image principale, ça devient d'abord blanc avant d'afficher l'image du hover, je ne sais pas ce qui fait ça mais j'aimerais que le hover de l'image soit intuitif et direct sans interruption d'une opacité ou d'un temps d'apparition.
+
+* Tu vas me créer une section : TOP SELLING pour afficher mes produits les plus vendus (plus d'avis clients, le plus acheté). Tu feras le design comme la quatrième (avec le slide, le slide fonctionnera dans la même logique qu'avec les catégories, mais ici il n'y aura pas un nombre de produits défini à afficher, mais on va pouvoir afficher le suivant et revenir aussi) section dans la première image.
+
+
+
+Le code du controller et le product_show.html.twig.
+
+Je t'envoie aussi les codes des enums, pas forcément besoin de les utiliser maintenant mais peut-être plus tard.
+
+
+
+```php
+
+<?php
+
+namespace App\Enum;
+
+enum OrderStatus: string {
+
+    case Pending = 'pending';
+
+    case Processing = 'processing';
+
+    case Shipped = 'shipped';
+
+    case Delivered = 'delivered';
+
+    case Canceled = 'canceled';
+
+}
+
+```
+
+
+
+
+
+```php
+
+<?php
+
+namespace App\Enum;
+
+enum PaymentProvider: string {
+
+    case Stripe = 'stripe';
+
+    case PayPal = 'paypal';
+
+    case Fedapay = 'fedapay';
+
+}        
+
+```
+
+
+
+
+
+```php
+
+<?php
+
+namespace App\Enum;
+
+
+
+enum PaymentStatus: string {
+
+    case Pending = 'pending';
+
+    case Completed = 'completed';
+
+    case Failed = 'failed';
+
+    case Refunded = 'refunded';
+
+}
+
+```
+
+
+
+
+
+```php
+
+<?php
+
+namespace App\Enum;
+
+enum ShipmentStatus: string {
+
+    case Pending = 'pending';
+
+    case Shipped = 'shipped';
+
+    case Delivered = 'delivered';
+
+    case Returned = 'returned';
+
+    case Cancelled = 'cancelled'; 
+
+}    
+
+```

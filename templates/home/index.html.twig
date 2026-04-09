@@ -1,0 +1,414 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} NovaWear | Acheter plus, payer moins {% endblock %}
+
+{% block body %}
+    <main>
+
+      {# ══ HERO ══════════════════════════════════════════════════════ #}
+      <section class="nw-hero" aria-label="Hero">
+        <div class="nw-hero__inner container">
+          <div class="nw-hero__content">
+            <span class="nw-hero__tag">NEW COLLECTION</span>
+            <h1 class="nw-hero__title">
+              The Purl Knit<br>Cardigan
+            </h1>
+            <p class="nw-hero__desc">
+              Here is your chance to upgrade your wardrobe with a variation.
+              Premium quality, timeless style.
+            </p>
+            <a href="{{ path('shop.index') }}" class="nw-hero__cta">
+              SHOP THE LOOK
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {# ══ 3 BANNERS ══════════════════════════════════════════════════ #}
+      <section class="nw-banners container">
+        <div class="nw-banners__grid">
+
+          <div class="nw-banner nw-banner--1">
+            <div class="nw-banner__body">
+              <p class="nw-banner__sub">DISCOUNT 20%</p>
+              <h3 class="nw-banner__title">Relaxed Fit<br>Overshirt</h3>
+            </div>
+          </div>
+
+          <div class="nw-banner nw-banner--2">
+            <div class="nw-banner__body">
+              <h3 class="nw-banner__title">Discount 20%<br>All Items</h3>
+              <p class="nw-banner__desc">100% leather handmade</p>
+            </div>
+          </div>
+
+          <div class="nw-banner nw-banner--3">
+            <div class="nw-banner__body">
+              <h3 class="nw-banner__title">Get 20% OFF<br>In APP</h3>
+              <a href="{{ path('shop.index') }}" class="nw-banner__link">SHOP NOW</a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {# ══════════════════════════════════════════════
+   BROWSE BY CATEGORIES
+══════════════════════════════════════════════ #}
+<section class="nw-cat-section container pb-4 mt-5" id="browse-categories">
+    <!--<h2 class="section__title">BROWSE BY CATEGORY</h2>-->
+
+  <div class="nw-cat-slider">
+    {# Flèche gauche #}
+    <button class="nw-cat-arrow nw-cat-arrow--prev" id="catPrev" aria-label="Précédent" disabled>
+      &#8249;
+    </button>
+
+    <div class="nw-cat-viewport">
+      <div class="nw-cat-track" id="catTrack">
+
+        {# 2 lignes × 8 => 16 catégories par page #}
+        {% set perPage = 16 %}
+        {% set total   = categories|length %}
+        {% set pages   = (total / perPage)|round(0, 'ceil') %}
+
+        {% for pageIndex in 0..(pages - 1) %}
+          <div class="nw-cat-page">
+            {% for i in (pageIndex * perPage)..(pageIndex * perPage + perPage - 1) %}
+              {% if categories[i] is defined %}
+                {% set category = categories[i] %}
+                <a href="{{ path('shop.index') }}?category={{ category.name }}" class="nw-cat-item">
+                  <div class="nw-cat-circle">
+                    {% if category.path %}
+                      <img
+                        src="{{ vich_uploader_asset(category, 'imageFile') }}"
+                        alt="{{ category.name }}"
+                        loading="lazy"
+                      />
+                    {% else %}
+                      <div class="nw-cat-placeholder">
+                        {{ category.name|slice(0, 1)|upper }}
+                      </div>
+                    {% endif %}
+                  </div>
+                  <span class="nw-cat-label">{{ category.name }}</span>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="nw-cat-page">
+            <p class="text-muted">Aucune catégorie disponible.</p>
+          </div>
+        {% endfor %}
+
+      </div>{# /#catTrack #}
+    </div>{# /#catViewport #}
+
+    {# Flèche droite #}
+    <button class="nw-cat-arrow nw-cat-arrow--next" id="catNext" aria-label="Suivant">
+      &#8250;
+    </button>
+  </div>
+</section>
+
+      {# ══════════════════════════════════════════════
+        NEW ARRIVALS
+    ══════════════════════════════════════════════ #}
+    <section class="section container" id="new-arrivals">
+      <h2 class="section__title">NEW ARRIVALS</h2>
+
+      <div class="row g-3" id="arrivalsGrid">
+        {% for product in newsArrivals %}
+
+          {# ── Résolution image principale ───────────────────────────
+            Priorité 1 : image isMain=true + color=null
+            Priorité 2 : première image color=null (quelle que soit isMain)
+            Priorité 3 : première image toutes confondues
+          ──────────────────────────────────────────────────────────── #}
+          {% set mainImage      = null %}
+          {% set secondaryImage = null %}
+          {% set allImages      = product.productImages|filter(img => img.color is null) %}
+          {% set allImagesAny   = product.productImages %}
+
+          {# Cherche l'image principale sans couleur #}
+          {% for img in allImages %}
+            {% if img.isMain and mainImage is null %}
+              {% set mainImage = img %}
+            {% endif %}
+          {% endfor %}
+
+          {# Fallback : première image sans couleur #}
+          {% if mainImage is null %}
+            {% for img in allImages %}
+              {% if mainImage is null %}
+                {% set mainImage = img %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+          {# Fallback final : première image toutes confondues #}
+          {% if mainImage is null %}
+            {% for img in allImagesAny %}
+              {% if mainImage is null %}
+                {% set mainImage = img %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+          {# Image de hover = première image secondaire APRÈS mainImage (sans couleur) #}
+          {% set foundMain = false %}
+          {% for img in allImages %}
+            {% if img == mainImage %}
+              {% set foundMain = true %}
+            {% elseif foundMain and secondaryImage is null %}
+              {% set secondaryImage = img %}
+            {% endif %}
+          {% endfor %}
+
+          {# Si pas trouvé après mainImage, prend n'importe quelle autre image sans couleur #}
+          {% if secondaryImage is null %}
+            {% for img in allImages %}
+              {% if img != mainImage and secondaryImage is null %}
+                {% set secondaryImage = img %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+          <div class="col-6 col-md-3">
+            <div class="product-card">
+              <div class="card-image-wrapper js-card-wrap">
+                <a href="{{ path('product_single', {slug: product.slug}) }}">
+                  <img
+                    class="card-img-main"
+                    src="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                    data-src-default="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                    data-src-hover="{{ secondaryImage ? vich_uploader_asset(secondaryImage, 'imageFile') : '' }}"
+                    alt="{{ product.name }}"
+                    style="transition: opacity .25s ease;"
+                  />
+                </a>
+
+                {% if product.compareAtPrice and product.compareAtPrice > product.price %}
+                  <span class="badge-sale">
+                    -{{ ((product.compareAtPrice - product.price) / product.compareAtPrice * 100)|round }}%
+                  </span>
+                {% endif %}
+
+                <div class="card-actions">
+                  <button class="action-btn" title="Favoris">
+                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  </button>
+                  <button class="action-btn" title="Aperçu">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <button class="add-to-cart">
+                <svg viewBox="0 0 24 24"><path d="M17 18c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.9 18 9 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023.44 5H5.21l-.94-2H1zm8 16c-1.1 0-1.99.9-1.99 2S7.9 22 9 22s2-.9 2-2-.9-2-2-2z"/></svg>
+                Add to Cart
+              </button>
+
+              <div class="card-body mt-2">
+                <p class="product-name">
+                  <a class="text-black" href="{{ path('product_single', {slug: product.slug}) }}">{{ product.name }}</a>
+                </p>
+                <div class="price-wrapper">
+                  <span class="price-current">${{ product.price }}</span>
+                  {% if product.compareAtPrice and product.compareAtPrice > product.price %}
+                    <span class="price-old">${{ product.compareAtPrice }}</span>
+                  {% endif %}
+                </div>
+                <div class="rating pb-2">
+                  {% set avg = product.ratingAverage ? product.ratingAverage|round(0, 'floor') : 0 %}
+                  <div class="stars">
+                    {% for i in 1..5 %}
+                      <span class="star {{ i <= avg ? 'filled' : 'empty' }}">★</span>
+                    {% endfor %}
+                  </div>
+                  <span class="reviews-count">({{ product.ratingCount }})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {% endfor %}
+      </div>
+
+      <div class="section__cta">
+        <button class="nw-btn-primary p-3 rounded-5" id="viewAllBtn">View All</button>
+      </div>
+    </section>
+</main>
+
+{# ══════════════════════════════════════════════
+   TOP SELLING
+══════════════════════════════════════════════ #}
+<section class="nw-topsell my-4 p-4" id="top-selling">
+  <div class="container">
+  <h3 class="section__title">TOP SELLING</h3>
+    <div class="nw-topsell__wrapper">
+
+      {# Image vedette gauche #}
+      <div class="nw-topsell__featured">
+        <div class="nw-topsell__featured-body">
+          <p class="nw-topsell__featured-sub">WHAT'S TRENDING</p>
+          <h2 class="nw-topsell__featured-title">This Week</h2>
+          <p class="nw-topsell__featured-desc">100% leather handmade</p>
+          <a href="{{ path('shop.index') }}" class="nw-topsell__featured-cta rounded-5">SHOP NOW</a>
+        </div>
+      </div>
+
+      {# Slider produits #}
+      <div class="nw-topsell__slider-wrap">
+        <div class="nw-topsell__arrows">
+          <button class="nw-ts-arrow" id="tsArrowPrev" aria-label="Précédent" disabled>&#8592;</button>
+          <button class="nw-ts-arrow" id="tsArrowNext" aria-label="Suivant">&#8594;</button>
+        </div>
+
+        <div class="nw-ts-viewport">
+          <div class="nw-ts-track" id="tsTrack">
+            {% for product in topSelling %}
+              {% set mainImage      = null %}
+              {% set secondaryImage = null %}
+              {% set allImages      = product.productImages|filter(img => img.color is null) %}
+              {% set allImagesAny   = product.productImages %}
+
+              {% for img in allImages %}
+                {% if img.isMain and mainImage is null %}{% set mainImage = img %}{% endif %}
+              {% endfor %}
+              {% if mainImage is null %}
+                {% for img in allImages %}{% if mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}
+              {% endif %}
+              {% if mainImage is null %}
+                {% for img in allImagesAny %}{% if mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}
+              {% endif %}
+              {% set foundMain = false %}
+              {% for img in allImages %}
+                {% if img == mainImage %}{% set foundMain = true %}
+                {% elseif foundMain and secondaryImage is null %}{% set secondaryImage = img %}
+                {% endif %}
+              {% endfor %}
+              {% if secondaryImage is null %}
+                {% for img in allImages %}
+                  {% if img != mainImage and secondaryImage is null %}{% set secondaryImage = img %}{% endif %}
+                {% endfor %}
+              {% endif %}
+
+              <div class="nw-ts-item">
+                <div class="nw-ts-card">
+                  <div class="nw-ts-card__img js-card-wrap">
+                    <a href="{{ path('product_single', {slug: product.slug}) }}">
+                      <img
+                        class="card-img-main"
+                        src="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                        data-src-default="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                        data-src-hover="{{ secondaryImage ? vich_uploader_asset(secondaryImage, 'imageFile') : '' }}"
+                        alt="{{ product.name }}"
+                      />
+                    </a>
+                    {% if product.compareAtPrice and product.compareAtPrice > product.price %}
+                      <span class="nw-ts-badge">BEST SELLER</span>
+                    {% endif %}
+                  </div>
+                  <div class="nw-ts-card__body">
+                    {% if product.categories|length > 0 %}
+                      <span class="nw-ts-card__cat">{{ product.categories|first.name|upper }}</span>
+                    {% endif %}
+                    <p class="nw-ts-card__name">
+                      <a href="{{ path('product_single', {slug: product.slug}) }}">{{ product.name }}</a>
+                    </p>
+                    <p class="nw-ts-card__price">${{ product.price }}</p>
+                    <a href="{{ path('product_single', {slug: product.slug}) }}" class="nw-ts-card__btn">
+                      Select options
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <p class="text-muted small">Aucun produit disponible.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+  <section class="testimonials-section container my-5" id="testimonials">
+      <!-- Titre analytique -->
+      <h2 class="section-title">We Care About Our Customers <br> Experience Too</h2>
+
+      <div class="cards-grid">
+          
+          <!-- Carte 1: Katie Lynn -->
+          <article class="testimonial-card">
+              <div class="card-header">
+                  <!-- Image placeholder (remplacer par URL réelle) -->
+                  <img src="{{ asset('images/testimonial-1.webp') }}" alt="Katie Lynn Avatar" class="avatar">
+                  <div class="user-info">
+                      <h3>Katie Lynn</h3>
+                      <p>Art Director</p>
+                  </div>
+              </div>
+              <div class="rating">
+                  <!-- 5 Étoiles SVG -->
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              </div>
+              <p class="testimonial-text">
+                  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia."
+              </p>
+          </article>
+
+          <!-- Carte 2: Tomos Campbell -->
+          <article class="testimonial-card">
+              <div class="card-header">
+                  <img src="{{ asset('images/testimonial-2.webp') }}" alt="Tomos Campbell Avatar" class="avatar">
+                  <div class="user-info">
+                      <h3>Tomos Campbell</h3>
+                      <p>App Developer</p>
+                  </div>
+              </div>
+              <div class="rating">
+                  <!-- 5 Étoiles (répétition du SVG) -->
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              </div>
+              <p class="testimonial-text">
+                  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit."
+              </p>
+          </article>
+
+          <!-- Carte 3: Robert Ocampo -->
+          <article class="testimonial-card">
+              <div class="card-header">
+                  <img src="{{ asset('images/testimonial-3.avif') }}" alt="Robert Ocampo Avatar" class="avatar">
+                  <div class="user-info">
+                      <h3>Robert Ocampo</h3>
+                      <p>Brand Designer</p>
+                  </div>
+              </div>
+              <div class="rating">
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              </div>
+              <p class="testimonial-text">
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
+              </p>
+          </article>
+
+      </div>
+  </section>
+
+{% endblock %}

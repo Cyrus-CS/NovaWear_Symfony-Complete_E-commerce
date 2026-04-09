@@ -1,0 +1,109 @@
+
+{% block body %}
+
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+<div class="card shadow-sm border-0 p-4">
+    <div class="card-body">
+        <div class="row g-4">
+
+            {# Colonne principale : contenus et prix #}
+            <div class="col-lg-8">
+                <h2 class="h5 mb-3">Informations générales</h2>
+
+                {{ form_row(form.name, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                {{ form_row(form.slug, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                {{ form_row(form.description, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                {{ form_row(form.shortDescription, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.price, {
+                            row_attr: {'class': 'mb-3'},
+                            label_attr: {'class': 'form-label fw-semibold'}
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.compareAtPrice, {
+                            row_attr: {'class': 'mb-3'},
+                            label_attr: {'class': 'form-label fw-semibold'}
+                        }) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.stock, {
+                            row_attr: {'class': 'mb-3'},
+                            label_attr: {'class': 'form-label fw-semibold'}
+                        }) }}
+                    </div>
+                </div>
+
+                {{ form_row(form.brand, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                {{ form_row(form.images, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                {{ form_row(form.mainImage, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+                {{ form_row(form.categories, {
+                    row_attr: {'class': 'mb-3'},
+                    label_attr: {'class': 'form-label fw-semibold'}
+                }) }}
+
+            </div>
+
+            {# Colonne droite : statuts en switches et dates #}
+            <div class="col-lg-4">
+                <h2 class="h6 mb-3">Statut du produit</h2>
+
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+
+                        <div class="form-check form-switch mb-2">
+                            {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.isActive, null, {
+                                label_attr: {'class': 'form-check-label'}
+                            }) }}
+                            {{ form_errors(form.isActive) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2">
+        {# Bouton de soumission : on garde ta logique de button_label #}
+        <button class="btn btn-primary">
+            {{ button_label|default('Save') }}
+        </button>
+    </div>
+</div>
+
+{{ form_end(form) }}
+{% endblock %}

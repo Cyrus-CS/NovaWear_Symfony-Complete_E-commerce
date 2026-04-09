@@ -1,0 +1,346 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Confirmed — {{ order.number }} | NovaWear{% endblock %}
+
+{% block body %}
+
+{# ══════════════════════════════════════════════════════════════
+   HERO — Confirmation check animé
+   ══════════════════════════════════════════════════════════════ #}
+<div class="cfm-hero py-5 text-center">
+  <div class="container">
+
+    {# Icône check animée #}
+    <div class="cfm-check mx-auto mb-4">
+      <svg class="cfm-check__svg" viewBox="0 0 52 52" fill="none">
+        <circle class="cfm-check__circle" cx="26" cy="26" r="24"
+                stroke="#111" stroke-width="2.5" fill="none"/>
+        <path   class="cfm-check__tick"   d="M14 26l9 9 15-17"
+                stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <h1 class="fw-bold mb-2" style="font-size:1.75rem">Order Confirmed!</h1>
+    <p class="text-muted mb-1">
+      Thank you{% if order.user %}, <strong>{{ order.user.username }}</strong>{% endif %}.
+      Your order has been placed successfully.
+    </p>
+    <p class="text-muted small mb-0">
+      A confirmation email will be sent to
+      {% if order.user %}
+        <strong>{{ order.user.email }}</strong>
+      {% else %}
+        your email address
+      {% endif %}
+      shortly.
+    </p>
+
+  </div>
+</div>
+
+{# ══════════════════════════════════════════════════════════════
+   CORPS
+   ══════════════════════════════════════════════════════════════ #}
+<div class="bg-light py-4 pb-5">
+  <div class="container" style="max-width:760px">
+
+    {# ── Bandeau numéro + statut ──────────────────────────────── #}
+    <div class="card border-0 shadow-sm rounded-3 mb-3 cfm-card--anim" style="--d:.05s">
+      <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3 py-3 px-4">
+
+        <div>
+          <div class="text-muted small mb-1">Order number</div>
+          <div class="fw-bold fs-6 font-monospace">{{ order.number }}</div>
+        </div>
+
+        <div>
+          <div class="text-muted small mb-1">Date</div>
+          <div class="fw-semibold small">{{ order.createdAt|date('F j, Y') }}</div>
+        </div>
+
+        <div>
+          <div class="text-muted small mb-1">Status</div>
+          <span class="cfm-status cfm-status--{{ order.status.value }}">
+            {{ order.status.value|capitalize }}
+          </span>
+        </div>
+
+        <div class="text-end">
+          <div class="text-muted small mb-1">Order total</div>
+          <div class="fw-bold fs-6">
+            {{ order.totalTtc|number_format(2, '.', '') }}
+            <span class="text-muted small fw-normal">{{ order.currency }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {# ── Items commandés ──────────────────────────────────────── #}
+    <div class="card border-0 shadow-sm rounded-3 mb-3 cfm-card--anim" style="--d:.12s">
+      <div class="card-body px-4 py-3">
+
+        <h2 class="h6 fw-bold mb-3 pb-3 border-bottom">
+          Items ordered
+          <span class="badge bg-dark ms-2">{{ order.orderItems|length }}</span>
+        </h2>
+
+        {% for item in order.orderItems %}
+          <div class="d-flex align-items-center gap-3 py-2
+                      {% if not loop.last %}border-bottom{% endif %}">
+
+            {# Placeholder image / initiales produit #}
+            <div class="cfm-item-thumb flex-shrink-0 rounded-2 border d-flex align-items-center
+                        justify-content-center bg-light text-muted fw-bold"
+                 style="width:52px;height:52px;font-size:.7rem;letter-spacing:.5px">
+              {{ item.productName|slice(0,2)|upper }}
+            </div>
+
+            <div class="flex-grow-1 min-w-0">
+              <div class="fw-semibold small text-truncate">{{ item.productName }}</div>
+              <div class="text-muted" style="font-size:.78rem">
+                Qty: {{ item.quantity }}
+                &ensp;·&ensp;
+                Unit price: {{ item.unitPrice|number_format(2, '.', '') }} {{ order.currency }}
+              </div>
+            </div>
+
+            <div class="fw-bold small text-nowrap">
+              {{ item.totalPrice|number_format(2, '.', '') }}
+              <span class="text-muted fw-normal">{{ order.currency }}</span>
+            </div>
+
+          </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+    {# ── Récapitulatif financier ───────────────────────────────── #}
+    <div class="card border-0 shadow-sm rounded-3 mb-3 cfm-card--anim" style="--d:.19s">
+      <div class="card-body px-4 py-3">
+
+        <h2 class="h6 fw-bold mb-3 pb-3 border-bottom">Order summary</h2>
+
+        <div class="d-flex justify-content-between small text-muted mb-2">
+          <span>Subtotal (excl. tax)</span>
+          <span class="text-dark fw-medium">
+            {{ order.totalHt|number_format(2, '.', '') }} {{ order.currency }}
+          </span>
+        </div>
+
+        <div class="d-flex justify-content-between small text-muted mb-2">
+          <span>Shipping</span>
+          {% set shipping = (order.totalTtc - order.totalHt)|abs %}
+          <span class="text-dark fw-medium">
+            {% if shipping <= 0 %}
+              <span class="text-success fw-semibold">Free</span>
+            {% else %}
+              {{ shipping|number_format(2, '.', '') }} {{ order.currency }}
+            {% endif %}
+          </span>
+        </div>
+
+        <hr class="my-2">
+
+        <div class="d-flex justify-content-between fw-bold">
+          <span>Total</span>
+          <span>{{ order.totalTtc|number_format(2, '.', '') }} {{ order.currency }}</span>
+        </div>
+
+      </div>
+    </div>
+
+    {# ── Expédition (si disponible) ───────────────────────────── #}
+    {% if order.shipments|length > 0 %}
+      {% set shipment = order.shipments|first %}
+      <div class="card border-0 shadow-sm rounded-3 mb-3 cfm-card--anim" style="--d:.26s">
+        <div class="card-body px-4 py-3">
+
+          <h2 class="h6 fw-bold mb-3 pb-3 border-bottom d-flex align-items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/>
+              <rect x="9" y="11" width="14" height="10" rx="1"/>
+              <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            </svg>
+            Shipping details
+          </h2>
+
+          <div class="row g-2">
+            {% if shipment.carrier %}
+              <div class="col-6">
+                <div class="text-muted small mb-1">Carrier</div>
+                <div class="fw-semibold small">{{ shipment.carrier }}</div>
+              </div>
+            {% endif %}
+            {% if shipment.trackingNumber %}
+              <div class="col-6">
+                <div class="text-muted small mb-1">Tracking number</div>
+                <div class="fw-semibold small font-monospace">{{ shipment.trackingNumber }}</div>
+              </div>
+            {% endif %}
+            <div class="col-6">
+              <div class="text-muted small mb-1">Shipment status</div>
+              <span class="cfm-status cfm-status--{{ shipment.status.value }}">
+                {{ shipment.status.value|capitalize }}
+              </span>
+            </div>
+            {% if shipment.shippedAt %}
+              <div class="col-6">
+                <div class="text-muted small mb-1">Shipped on</div>
+                <div class="fw-semibold small">{{ shipment.shippedAt|date('F j, Y') }}</div>
+              </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    {% else %}
+      {# Bandeau "en préparation" si pas encore expédié #}
+      <div class="cfm-preparing d-flex align-items-center gap-3 rounded-3 p-3 mb-3 cfm-card--anim" style="--d:.26s">
+        <div class="cfm-preparing__dot"></div>
+        <div>
+          <div class="fw-semibold small">Preparing your order</div>
+          <div class="text-muted" style="font-size:.78rem">
+            You will receive a shipping notification once your order is on its way.
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {# ── CTA ──────────────────────────────────────────────────── #}
+    <div class="d-flex flex-column flex-sm-row gap-3 mt-4 cfm-card--anim" style="--d:.32s">
+
+      <a href="{{ path('app_home') }}"
+         class="btn btn-dark flex-fill py-3 fw-bold d-flex align-items-center justify-content-center gap-2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Back to Shop
+      </a>
+
+      {% if app.user %}
+        <a href="{{ path('account.dashboard') }}"
+           class="btn btn-outline-dark flex-fill py-3 fw-semibold d-flex align-items-center justify-content-center gap-2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+          </svg>
+          My Account
+        </a>
+      {% endif %}
+
+    </div>
+
+    {# ── Mention sécurité ─────────────────────────────────────── #}
+    <div class="d-flex justify-content-center align-items-center gap-3 mt-4 flex-wrap">
+      <span class="d-flex align-items-center gap-1 text-muted" style="font-size:.73rem">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Secure payment
+      </span>
+      <span class="d-flex align-items-center gap-1 text-muted" style="font-size:.73rem">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+        </svg>
+        Free returns
+      </span>
+      <span class="d-flex align-items-center gap-1 text-muted" style="font-size:.73rem">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.01 2.18 2 2 0 012 .01h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+        </svg>
+        24/7 support
+      </span>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .cfm-hero {
+      background: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    /* ── Check animé ──────────────────────────────────────────── */
+    .cfm-check {
+      width: 56px; height: 56px; /* taille raisonnable dans le hero */
+    }
+    .cfm-check__svg {
+      width: 100%; height: 100%;
+      display: block; overflow: visible;
+    }
+
+    /* circonférence exacte = 2π × r24 ≈ 150.8 → arrondi à 151 */
+    .cfm-check__circle {
+      stroke-dasharray: 151;
+      stroke-dashoffset: 151;
+      animation: cfmCircle .6s ease forwards .1s;
+    }
+    /* longueur du tick path M14 26 l9 9 15-17 ≈ 34 */
+    .cfm-check__tick {
+      stroke-dasharray: 34;
+      stroke-dashoffset: 34;
+      animation: cfmTick .3s ease forwards .7s;
+    }
+    @keyframes cfmCircle { to { stroke-dashoffset: 0; } }
+    @keyframes cfmTick   { to { stroke-dashoffset: 0; } }
+
+    /* ── Cards animées ────────────────────────────────────────── */
+    .cfm-card--anim {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: cfmUp .4s ease forwards;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes cfmUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Badge statut ─────────────────────────────────────────── */
+    .cfm-status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-transform: capitalize;
+    }
+    .cfm-status--pending    { background: #fff3e0; color: #e65100; }
+    .cfm-status--processing { background: #e3f2fd; color: #1565c0; }
+    .cfm-status--shipped    { background: #e8f5e9; color: #2e7d32; }
+    .cfm-status--delivered  { background: #e8f5e9; color: #1b5e20; }
+    .cfm-status--canceled   { background: #fce4ec; color: #b71c1c; }
+
+    /* ── Bandeau "en préparation" ─────────────────────────────── */
+    .cfm-preparing {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+    }
+    .cfm-preparing__dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #f59e0b;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 0 rgba(245,158,11,.4);
+      animation: cfmPulse 1.6s ease infinite;
+    }
+    @keyframes cfmPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(245,158,11,.5); }
+      70%  { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+      100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    }
+
+    /* ── Miniature item ───────────────────────────────────────── */
+    .cfm-item-thumb {
+      background: #f0ece8 !important;
+      color: #888 !important;
+    }
+  </style>
+{% endblock %}

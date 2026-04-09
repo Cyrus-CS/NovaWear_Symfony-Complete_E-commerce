@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Coupon{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1>Coupon</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ coupon.id }}</td>
+            </tr>
+            <tr>
+                <th>Code</th>
+                <td>{{ coupon.code }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ coupon.description }}</td>
+            </tr>
+            <tr>
+                <th>DiscountType</th>
+                <td>{{ coupon.discountType }}</td>
+            </tr>
+            <tr>
+                <th>DiscountValue</th>
+                <td>{{ coupon.discountValue }}</td>
+            </tr>
+            <tr>
+                <th>StartsAt</th>
+                <td>{{ coupon.startsAt ? coupon.startsAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>ExpiresAt</th>
+                <td>{{ coupon.expiresAt ? coupon.expiresAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>IsActive</th>
+                <td>{{ coupon.isActive ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>MinCartTotal</th>
+                <td>{{ coupon.minCartTotal }}</td>
+            </tr>
+            <tr>
+                <th>MaxUses</th>
+                <td>{{ coupon.maxUses }}</td>
+            </tr>
+            <tr>
+                <th>UsedCount</th>
+                <td>{{ coupon.usedCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_coupon_index') }}">back to list</a>
+
+    <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}">edit</a>
+
+    {{ include('coupon/_delete_form.html.twig') }}
+</div>
+{% endblock %}

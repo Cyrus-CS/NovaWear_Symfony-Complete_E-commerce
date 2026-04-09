@@ -1,0 +1,86 @@
+{% if products|length == 0 %}
+  <div class="text-center py-5 text-muted">
+    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.2" class="mb-3 d-block mx-auto">
+      <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+    </svg>
+    <p class="small">No products match your filters.</p>
+    <button class="btn btn-outline-dark btn-sm px-4 mt-2" id="resetFiltersBtn">Reset filters</button>
+  </div>
+{% else %}
+  <div class="row g-3">
+    {% for product in products %}
+
+      {% set mainImage      = null %}
+      {% set secondaryImage = null %}
+      {% set allImages      = product.productImages|filter(img => img.color is null) %}
+      {% set allImagesAny   = product.productImages %}
+
+      {% for img in allImages %}{% if img.isMain and mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}
+      {% if mainImage is null %}{% for img in allImages %}{% if mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}{% endif %}
+      {% if mainImage is null %}{% for img in allImagesAny %}{% if mainImage is null %}{% set mainImage = img %}{% endif %}{% endfor %}{% endif %}
+      {% set foundMain = false %}
+      {% for img in allImages %}
+        {% if img == mainImage %}{% set foundMain = true %}
+        {% elseif foundMain and secondaryImage is null %}{% set secondaryImage = img %}{% endif %}
+      {% endfor %}
+      {% if secondaryImage is null %}
+        {% for img in allImages %}{% if img != mainImage and secondaryImage is null %}{% set secondaryImage = img %}{% endif %}{% endfor %}
+      {% endif %}
+
+      <div class="col-6 col-md-4">
+        <div class="product-card h-100">
+          <div class="card-image-wrapper js-card-wrap">
+            <a href="{{ path('product_single', {slug: product.slug}) }}">
+              <img
+                class="card-img-main"
+                src="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                data-src-default="{{ mainImage ? vich_uploader_asset(mainImage, 'imageFile') : asset('images/placeholder.jpg') }}"
+                data-src-hover="{{ secondaryImage ? vich_uploader_asset(secondaryImage, 'imageFile') : '' }}"
+                alt="{{ product.name }}"
+              />
+            </a>
+
+            {% if product.stock == 0 %}
+              <span class="badge bg-dark position-absolute top-0 start-0 m-2" style="font-size:.7rem;">SOLD OUT</span>
+            {% elseif product.compareAtPrice and product.compareAtPrice > product.price %}
+              {% set pct = ((product.compareAtPrice - product.price) / product.compareAtPrice * 100)|round %}
+              <span class="badge position-absolute top-0 start-0 m-2"
+                    style="background:#4caf50;font-size:.7rem;">-{{ pct }}%</span>
+            {% endif %}
+
+            <div class="card-actions">
+              <button class="action-btn" title="Wishlist"
+                      onclick="addToWishlist({{ product.id }}, this)">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body mt-2 text-center">
+            {% if product.categories|length > 0 %}
+              <div class="text-muted mb-1" style="font-size:.72rem;letter-spacing:.06em;">
+                {{ product.categories|map(c => c.name)|join(', ') }}
+              </div>
+            {% endif %}
+            <p class="product-name">
+              <a class="text-dark text-decoration-none" href="{{ path('product_single', {slug: product.slug}) }}">
+                {{ product.name }}
+              </a>
+            </p>
+            <div class="price-wrapper">
+              {% if product.compareAtPrice and product.compareAtPrice > product.price %}
+                <span class="price-old">${{ product.compareAtPrice }}</span>
+              {% endif %}
+              <span class="price-current">${{ product.price }}</span>
+            </div>
+            <a href="{{ path('product_single', {slug: product.slug}) }}"
+               class="btn btn-outline-dark btn-sm w-100 mt-2" style="font-size:.78rem;letter-spacing:.04em;">
+              Select options
+            </a>
+          </div>
+        </div>
+      </div>
+
+    {% endfor %}
+  </div>
+{% endif %}

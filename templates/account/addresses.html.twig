@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+{% block title %}Addresses | NovaWear{% endblock %}
+
+{% block body %}
+<div class="ac-hero position-relative overflow-hidden">
+  <div class="ac-hero__overlay"></div>
+  <div class="container position-relative z-1 py-5 text-center text-white">
+    <h1 class="ac-hero__title fw-bold mb-2">My Account</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}" class="text-white text-opacity-75 text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('account.dashboard') }}" class="text-white text-opacity-75 text-decoration-none">My Account</a></li>
+        <li class="breadcrumb-item active text-white">Addresses</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="bg-white py-5">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      {% include 'account/_sidebar.html.twig' with {current: 'account.addresses'} %}
+
+      <div class="col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h2 class="h5 fw-bold mb-0">Addresses</h2>
+        </div>
+
+        {% for message in app.flashes('success') %}
+          <div class="alert alert-success alert-dismissible fade show py-2">
+            {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+
+        <p class="text-muted small mb-4">
+          The following addresses will be used on the checkout page by default.
+        </p>
+
+        {% if addresses|length == 0 %}
+          <div class="border rounded-3 p-4 text-center text-muted" style="border-style:dashed!important;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" class="mb-3">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <p class="small mb-0">You have not set up any addresses yet.</p>
+          </div>
+
+        {% else %}
+          <div class="row g-3">
+            {% for address in addresses %}
+              <div class="col-md-6">
+                <div class="border rounded-3 p-4 h-100 position-relative">
+
+                  {# Badge pays #}
+                  <span class="badge bg-light text-dark border mb-2" style="font-size:.72rem;">
+                    {{ address.country.name }}
+                  </span>
+
+                  <p class="fw-semibold mb-1">{{ address.firstName }} {{ address.lastName }}</p>
+
+                  {% if address.company %}
+                    <p class="text-muted small mb-1">{{ address.company }}</p>
+                  {% endif %}
+
+                  <p class="small mb-1 text-muted">{{ address.street }}</p>
+                  <p class="small mb-1 text-muted">{{ address.city }}, {{ address.postalCode }}</p>
+
+                  {% if address.phone %}
+                    <p class="small mb-0 text-muted">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="me-1" style="vertical-align:middle;">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.07 2.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z" stroke="#888" stroke-width="1.8"/>
+                      </svg>
+                      {{ address.phone }}
+                    </p>
+                  {% endif %}
+
+                  {# Actions #}
+                  <div class="d-flex gap-2 mt-3 pt-3 border-top">
+                    <form action="{{ path('account.address_delete', {id: address.id}) }}" method="POST"
+                          onsubmit="return confirm('Delete this address?')">
+                      <input type="hidden" name="_token" value="{{ csrf_token('delete_address_' ~ address.id) }}">
+                      <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size:.75rem;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="me-1">
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

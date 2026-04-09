@@ -1,0 +1,227 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Account | NovaWear{% endblock %}
+
+{% block body %}
+
+{# ══════════════════════════════════════════════════════════════
+   HERO BANNER — "My Account"
+   ══════════════════════════════════════════════════════════════ #}
+<div class="ac-hero position-relative overflow-hidden"
+     style="background-image:url('{{ asset('images/account-hero.jpg') }}'); min-height:200px; height:30vh;">
+
+  <div class="ac-hero__overlay position-absolute top-0 start-0 w-100 h-100"></div>
+
+  {# Centre vertical + horizontal avec Bootstrap #}
+  <div class="container position-relative z-1 h-100 d-flex flex-column justify-content-center align-items-center text-center text-white py-4">
+    <h1 class="fw-bold mb-2">My Account</h1>
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a href="{{ path('home') }}" class="text-white text-opacity-75 text-decoration-none">Home</a>
+        </li>
+        <li class="breadcrumb-item active text-white" aria-current="page">My Account</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+{# ══════════════════════════════════════════════════════════════
+   CORPS — Register (gauche) | Login (droite)
+   ══════════════════════════════════════════════════════════════ #}
+<div class="bg-white py-5">
+  <div class="container">
+
+    {% for flash_error in app.flashes('verify_email_error') %}
+      <div class="alert alert-danger small rounded-2 mb-4">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="row g-0">
+
+      {# ── COLONNE GAUCHE : Register ──────────────────────────── #}
+      <div class="col-lg-6 pe-lg-5 border-end-lg">
+
+        <h2 class="ac-form-title mb-4">Register</h2>
+
+        {{ form_start(registrationForm, {
+          attr: { novalidate: 'novalidate', class: 'ac-register-form' }
+        }) }}
+
+          {# Username #}
+          <div class="mb-3">
+            <label class="ac-label" for="{{ registrationForm.username.vars.id }}">
+              Username <span class="text-danger">*</span>
+            </label>
+            {{ form_widget(registrationForm.username, {
+              attr: { class: 'ac-input form-control', placeholder: '' }
+            }) }}
+            {{ form_errors(registrationForm.username) }}
+          </div>
+
+          {# Email #}
+          <div class="mb-3">
+            <label class="ac-label" for="{{ registrationForm.email.vars.id }}">
+              Email address <span class="text-danger">*</span>
+            </label>
+            {{ form_widget(registrationForm.email, {
+              attr: { class: 'ac-input form-control', placeholder: '' }
+            }) }}
+            {{ form_errors(registrationForm.email) }}
+          </div>
+
+          {# Password + toggle visibilité #}
+          <div class="mb-4">
+            <label class="ac-label" for="{{ registrationForm.plainPassword.vars.id }}">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="position-relative">
+              {{ form_widget(registrationForm.plainPassword, {
+                label: false,
+                attr: {
+                  class: 'ac-input form-control pe-5',
+                  id:    'registerPassword',
+                  placeholder: ''
+                }
+              }) }}
+
+            </div>
+            {{ form_errors(registrationForm.plainPassword) }}
+          </div>
+
+          {# Mention RGPD #}
+          <p class="text-muted small mb-4">
+            Your personal data will be used to support your experience throughout this
+            website, to manage access to your account, and for other purposes described
+            in our <a href="#" class="fw-bold text-dark text-decoration-none">privacy policy</a>.
+          </p>
+
+          <button type="submit" class="ac-btn-register w-100 text-uppercase fw-bold">
+            Register
+          </button>
+
+        {{ form_end(registrationForm) }}
+
+      </div>
+
+      {# ── SÉPARATEUR VERTICAL (visible lg+) ──────────────────── #}
+      <div class="d-none d-lg-block" style="width:1px;background:#e8e8e8;margin:0 0 0 -1px;"></div>
+
+      {# ── COLONNE DROITE : Login ─────────────────────────────── #}
+      <div class="col-lg-6 ps-lg-5 mt-5 mt-lg-0 text-center d-flex flex-column align-items-center justify-content-center">
+
+        <h2 class="ac-form-title mb-4">Login</h2>
+
+        <p class="text-muted small mb-4" style="max-width:380px;line-height:1.7">
+          Login here by filling your username and password or use your favorite
+          social network account to enter to the site. Site login will simplify the
+          purchase process and allows you to manage your personal account.
+        </p>
+
+        <a href="{{ path('app_login') }}" class="ac-btn-login text-uppercase fw-bold px-5">
+          Login
+        </a>
+
+      </div>
+
+    </div>{# /row #}
+  </div>{# /container #}
+</div>
+
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+
+    .ac-hero__overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.45);
+    }
+    .ac-hero__title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: -1px;
+    }
+    .breadcrumb-item + .breadcrumb-item::before {
+      color: rgba(255,255,255,.6);
+      content: '/';
+    }
+
+    /* ── Séparateur vertical lg ─────────────────────────────── */
+    @media (min-width: 992px) {
+      .border-end-lg { border-right: 1px solid #e8e8e8; }
+    }
+
+    /* ── Titres formulaires ─────────────────────────────────── */
+    .ac-form-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: -.3px;
+    }
+
+    /* ── Labels ─────────────────────────────────────────────── */
+    .ac-label {
+      display: block;
+      font-size: .82rem;
+      color: #111;
+      margin-bottom: 6px;
+    }
+
+    /* ── Inputs ─────────────────────────────────────────────── */
+    .ac-input {
+      height: 46px;
+      border: 1px solid #d0d0d0;
+      border-radius: 3px;
+      font-size: .875rem;
+      color: #111;
+      box-shadow: none !important;
+      transition: border-color .2s;
+    }
+    .ac-input:focus { border-color: #111; }
+
+    /* ── Bouton Register ────────────────────────────────────── */
+    .ac-btn-register {
+      display: block;
+      padding: 14px;
+      background: #e63e3e;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      font-size: .8rem;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .ac-btn-register:hover { background: #c93333; transform: translateY(-1px); }
+
+    /* ── Bouton Login ───────────────────────────────────────── */
+    .ac-btn-login {
+      display: inline-block;
+      padding: 11px 40px;
+      background: #fff;
+      color: #111;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: .78rem;
+      letter-spacing: 1.5px;
+      text-decoration: none;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .ac-btn-login:hover {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
+      /* ── Erreurs Symfony form ───────────────────────────────── */
+      .ac-register-form .invalid-feedback,
+      .ac-register-form ul.form-error {
+        font-size: .78rem;
+        color: #e63e3e;
+        list-style: none;
+        padding: 0; margin: 4px 0 0;
+      }
+    
+  </style>
+{% endblock %}

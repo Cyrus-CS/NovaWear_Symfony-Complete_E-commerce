@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Category{% endblock %}
+
+{% block body %}
+<div class='container'>
+    <div class="container-fluid py-4">
+        <h1>Create new Category</h1>
+
+        {{ include('admin/category/_form.html.twig') }}
+
+        <a class="btn btn-secondary" href="{{ path('app_category_index') }}">back to list</a>
+    </div>
+</div>
+{% endblock %}
+

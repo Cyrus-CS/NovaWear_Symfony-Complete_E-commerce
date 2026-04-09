@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+{% block title %}Account Details | NovaWear{% endblock %}
+
+{% block body %}
+<div class="ac-hero position-relative overflow-hidden">
+  <div class="ac-hero__overlay"></div>
+  <div class="container position-relative z-1 py-5 text-center text-white">
+    <h1 class="ac-hero__title fw-bold mb-2">My Account</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}" class="text-white text-opacity-75 text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('account.dashboard') }}" class="text-white text-opacity-75 text-decoration-none">My Account</a></li>
+        <li class="breadcrumb-item active text-white">Account details</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="bg-white py-5">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      {% include 'account/_sidebar.html.twig' with {current: 'account.details'} %}
+
+      <div class="col-lg-9">
+
+        {% for message in app.flashes('success') %}
+          <div class="alert alert-success alert-dismissible fade show py-2 mb-4">
+            {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+
+        {% if errors is defined and errors|length > 0 %}
+          <div class="alert alert-danger py-2 mb-4">
+            <ul class="mb-0 ps-3">
+              {% for error in errors %}<li class="small">{{ error }}</li>{% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <form method="POST" action="{{ path('account.details') }}" novalidate>
+          <input type="hidden" name="_token" value="{{ csrf_token('account_details') }}">
+
+          {# Infos de base #}
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Display name <span class="text-danger">*</span></label>
+              <input type="text" name="username" class="form-control"
+                     value="{{ app.user.username }}" required minlength="2">
+              <div class="form-text">This will be how your name will be displayed in the account section and in reviews.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Email address <span class="text-danger">*</span></label>
+              <input type="email" name="email" class="form-control"
+                     value="{{ app.user.email }}" required>
+            </div>
+          </div>
+
+          {# Changement de mot de passe #}
+          <div class="border rounded-3 p-4 mb-4">
+            <h3 class="h6 fw-bold mb-4">Password change</h3>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Current password <span class="text-muted fw-normal">(leave blank to leave unchanged)</span></label>
+              <div class="input-group">
+                <input type="password" name="current_password" id="pwdCurrent" class="form-control border-end-0">
+                <button type="button" class="btn btn-outline-secondary border-start-0 js-toggle-pwd" data-target="pwdCurrent" tabindex="-1">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">New password <span class="text-muted fw-normal">(leave blank to leave unchanged)</span></label>
+              <div class="input-group">
+                <input type="password" name="new_password" id="pwdNew" class="form-control border-end-0">
+                <button type="button" class="btn btn-outline-secondary border-start-0 js-toggle-pwd" data-target="pwdNew" tabindex="-1">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-1">
+              <label class="form-label small fw-semibold">Confirm new password</label>
+              <div class="input-group">
+                <input type="password" name="confirm_password" id="pwdConfirm" class="form-control border-end-0">
+                <button type="button" class="btn btn-outline-secondary border-start-0 js-toggle-pwd" data-target="pwdConfirm" tabindex="-1">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-dark px-4" style="letter-spacing:.05em;font-size:.85rem;">
+            SAVE CHANGES
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.js-toggle-pwd').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.target);
+    input.type  = input.type === 'password' ? 'text' : 'password';
+  });
+});
+</script>
+{% endblock %}
